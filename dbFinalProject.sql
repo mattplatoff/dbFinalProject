@@ -1,3 +1,11 @@
+-- TO USE THIS DUMP:
+-- mysql -u root -p
+-- create database hulton_hotels;
+-- EXIT MYSQL, THEN:
+-- mysql -u root -p < dbFinalProject.sql
+
+USE hulton_hotels;
+
 CREATE TABLE Hotel(
         HotelID int PRIMARY KEY, Phone_no int, Street varchar(30), 
         City varchar(30), State varchar(30), Country varchar(30), ZIP int);
