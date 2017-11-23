@@ -1,9 +1,5 @@
--- TO USE THIS DUMP:
--- mysql -u root -p
--- create database hulton_hotels;
--- EXIT MYSQL, THEN:
--- mysql -u root -p < dbFinalProject.sql
-
+DROP DATABASE hulton_hotels;
+CREATE DATABASE hulton_hotels;
 USE hulton_hotels;
 
 CREATE TABLE Hotel(
