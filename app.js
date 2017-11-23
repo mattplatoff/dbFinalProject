@@ -25,6 +25,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 
+app.post('/registerUser', function(req, res) {
+    console.log("Registration post request:\n name: "
+        +req.body.name+"\n address: "
+        +req.body.address+"\n email: "+
+        req.body.email+ "\n phone: "+req.body.phone);
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
