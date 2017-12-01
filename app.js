@@ -10,7 +10,7 @@ var users = require('./routes/users');
 var myaccount = require('./routes/myaccount');
 var hotels = require('./routes/hotels');
 var rooms = require('./routes/rooms');
-var rooms = require('./roommodel.js');
+var RoomModel = require('./roommodel.js');
 
 var app = express();
 

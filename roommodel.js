@@ -12,14 +12,14 @@ var RoomModel = function (room_no, price, capacity, floor_no, description, type,
   this.e_date = e_date;
 }
 
-User.prototype.room_no = -1;
-User.prototype.price = -1;
-User.prototype.capacity =-1;
-User.prototype.floor_no = -1;
-User.prototype.description = "";
-User.prototype.type = "Economy";
-User.prototype.discount = -1;
-User.prototype.s_date = -1;
-User.prototype.e_date = -1;
+RoomModel.prototype.room_no = -1;
+RoomModel.prototype.price = -1;
+RoomModel.prototype.capacity =-1;
+RoomModel.prototype.floor_no = -1;
+RoomModel.prototype.description = "";
+RoomModel.prototype.type = "Economy";
+RoomModel.prototype.discount = -1;
+RoomModel.prototype.s_date = -1;
+RoomModel.prototype.e_date = -1;
 
-}
+module.exports = RoomModel;
