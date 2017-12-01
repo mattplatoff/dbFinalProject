@@ -11,5 +11,9 @@ router.get('/hotels', function(req, res, next) {
 router.get('/rooms', function(req, res, next) {
     res.render('rooms', { title: 'Hulton Hotel Management' });
 });
+router.get('/myaccount', function(req, res, next) {
+    res.render('myaccount', { title: 'Hulton Hotel Management' });
+});
+
 
 module.exports = router;
