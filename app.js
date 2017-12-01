@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var myaccount = require('./routes/myaccount');
-var reservations = require('./routes/reservations');
+var hotels = require('./routes/hotels');
 
 var app = express();
 
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/myaccount', myaccount);
-app.use('/reservations',reservations);
+app.use('/hotels',hotels);
 
 app.use('/registerUser', function(req, res) {
     console.log("Registration post request:\n name: "
