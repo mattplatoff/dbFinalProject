@@ -9,6 +9,8 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var myaccount = require('./routes/myaccount');
 var hotels = require('./routes/hotels');
+var rooms = require('./routes/rooms');
+var rooms = require('./roommodel.js');
 
 var app = express();
 
@@ -28,6 +30,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/myaccount', myaccount);
 app.use('/hotels',hotels);
+app.use('/rooms',rooms);
 
 app.use('/registerUser', function(req, res) {
     console.log("Registration post request:\n name: "
