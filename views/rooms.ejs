@@ -13,7 +13,6 @@
     <title><%=title%></title>
 </head>
 <body style="padding-top: 70px">
-
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -60,86 +59,31 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+<% roomList = JSON.parse(roomListing); console.log(roomListing)%>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
-            <ul class="list-group">
-                <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-                <li class="list-group-item ">For up to [capacity] residents</li>
-                <li class="list-group-item">
-                    <ul class="list-group">
-                        [Description]
-                    </ul>
-                </li>
-                <li class="list-group-item ">Price: [price]</li>
-                <li class="list-group-item"> Reviews
-                    <ul>
-                        <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                        <li>Loved it! Great view and staff.</li>
-                    </ul>
-                </li>
+        <% roomList.forEach(function(room, index) { %>
+          <div class="col-md-6">
+              <ul class="list-group">
+                  <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %></li>
+                  <li class="list-group-item ">For up to <%=room['Capacity'] %> residents</li>
+                  <li class="list-group-item">
+                      <ul class="list-group">
+                          <%=room['Description'] %>
+                      </ul>
+                  </li>
+                  <li class="list-group-item ">Price: <%=room['Price'] %></li>
+                  <li class="list-group-item"> Reviews
+                      <ul>
+                        <% room['Reviews'].forEach(function(review, index) { %>
+                          <li><%= review['TextComment'] %></li>
+                        <% }); %>
+                      </ul>
+                  </li>
 
-            </ul>
-        </div>
-        <div class="col-md-6">
-            <ul class="list-group">
-                <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-                <li class="list-group-item ">For up to [capacity] residents</li>
-                <li class="list-group-item">
-                    <ul class="list-group">
-                        [Description]
-                    </ul>
-                </li>
-                <li class="list-group-item ">Price: [price]</li>
-                <li class="list-group-item"> Reviews
-                    <ul>
-                        <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                        <li>Loved it! Great view and staff.</li>
-                    </ul>
-                </li>
-
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-          <ul class="list-group">
-              <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-              <li class="list-group-item ">For up to [capacity] residents</li>
-              <li class="list-group-item">
-                  <ul class="list-group">
-                      [Description]
-                  </ul>
-              </li>
-              <li class="list-group-item ">Price: [price]</li>
-              <li class="list-group-item"> Reviews
-                  <ul>
-                      <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                      <li>Loved it! Great view and staff.</li>
-                  </ul>
-              </li>
-
-          </ul>
-      </div>
-      <div class="col-md-6">
-          <ul class="list-group">
-              <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-              <li class="list-group-item ">For up to [capacity] residents</li>
-              <li class="list-group-item">
-                  <ul class="list-group">
-                      [Description]
-                  </ul>
-              </li>
-              <li class="list-group-item ">Price: [price]</li>
-              <li class="list-group-item"> Reviews
-                  <ul>
-                      <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                      <li>Loved it! Great view and staff.</li>
-                  </ul>
-              </li>
-
-          </ul>
-      </div>
+              </ul>
+          </div>
+        <% }); %>
     </div>
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>

@@ -6,13 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var myaccount = require('./routes/myaccount');
-var hotels = require('./routes/hotels');
-var rooms = require('./routes/rooms');
 var RoomModel = require('./roommodel.js');
 
 var app = express();
+var mysql = require('mysql'); 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,10 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/myaccount', myaccount);
-app.use('/hotels',hotels);
-app.use('/rooms',rooms);
 
 app.use('/registerUser', function(req, res) {
     console.log("Registration post request:\n name: "

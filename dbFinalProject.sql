@@ -26,9 +26,9 @@ CREATE TABLE Service(
         FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID));
 
 CREATE TABLE `Room-Has`(
-        Room_no int, HotelD int, Price int, Capacity int, Floor_no int, 
+        Room_no int, HotelID int, Price int, Capacity int, Floor_no int, 
         Description varchar(250), Type varchar(30), SDate date NULL, 
-        EDate date NULL, Discount int NULL, HotelID int,
+        EDate date NULL, Discount int NULL,
         FOREIGN KEY (HotelID) REFERENCES Hotel (HotelID),
         PRIMARY KEY (Room_no, HotelID));
 
