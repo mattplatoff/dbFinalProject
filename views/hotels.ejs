@@ -60,12 +60,18 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+<% hotelList = JSON.parse(hotelListing);%>
 <div class="container-fluid">
     <div class="row">
+      <% hotelList.forEach(function(hotel, index) { %>
         <div class="col-md-4">
             <ul class="list-group">
-                <li class="list-group-item active">Hotel 1 </li>
-                <li class="list-group-item ">Princeton, NJ</li>
+                <li class="list-group-item active" style="padding-bottom:20px;">
+                  Hotel (Id <%= hotel['HotelID']%>)
+                  <button style="float:right;" type="button" onclick="location.href='rooms/<%=hotel['HotelID']%>'" data-hotel-id="<%=hotel['HotelID']%>" class="btn btn-default">View rooms!</button>
+                </li>
+                <li class="list-group-item "><%= hotel['City'] %>, <%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %></li>
+                <li class="list-group-item">Phone: <%= hotel['Phone_no']%></li>
                 <li class="list-group-item">Amenities
                     <ul class="list-group">
                         <li class="list-group-item">Breakfast Types:
@@ -91,152 +97,7 @@
 
             </ul>
         </div>
-        <div class="col-md-4">
-            <ul class="list-group">
-                <li class="list-group-item active">Hotel 2</li>
-                <li class="list-group-item ">Princeton, NJ</li>
-                <li class="list-group-item">Amenities
-                    <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-                                <li class="list-group-item">english</li>
-                            </ul>
-                        </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <ul class="list-group">
-                <li class="list-group-item active">Hotel 1 </li>
-                <li class="list-group-item ">Princeton, NJ</li>
-                <li class="list-group-item">Amenities
-                    <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-                                <li class="list-group-item">english</li>
-                            </ul>
-                        </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4"></div>
-        <div class="col-md-4"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <ul class="list-group">
-                <li class="list-group-item active">Hotel 1 </li>
-                <li class="list-group-item ">Princeton, NJ</li>
-                <li class="list-group-item">Amenities
-                    <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-                                <li class="list-group-item">english</li>
-                            </ul>
-                        </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <ul class="list-group">
-                <li class="list-group-item active">Hotel 2</li>
-                <li class="list-group-item ">Princeton, NJ</li>
-                <li class="list-group-item">Amenities
-                    <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-                                <li class="list-group-item">english</li>
-                            </ul>
-                        </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <ul class="list-group">
-                <li class="list-group-item active">Hotel 1 </li>
-                <li class="list-group-item ">Princeton, NJ</li>
-                <li class="list-group-item">Amenities
-                    <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-                                <li class="list-group-item">english</li>
-                            </ul>
-                        </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-4"></div>
-        <div class="col-md-4"></div>
+        <% }); %>
     </div>
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>

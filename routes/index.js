@@ -5,26 +5,15 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "1234",
+  password: "password",
   database: "hulton_hotels"
 });
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Hulton Hotel Management' });
-});
-router.get('/hotels', function(req, res, next) {
-    res.render('hotels', { title: 'Hulton Hotel Management' });
-});
-
+//REGION CALLBACKS
 function loadReviews(reviewSQL, callback){
-  reviewList = [];
   con.query(reviewSQL, function (err, reviews) {
     if(err) throw err;
-    reviews.forEach(function(rev){
-      reviewList.push(rev);
-    });
-    callback(reviewList);
+    callback(reviews);
   });
 }
 
@@ -54,6 +43,23 @@ function registerUser(data, callback){
 		callback();
 	});
 };
+//END REGION CALLBACKS
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Hulton Hotel Management' });
+});
+router.get('/hotels', function(req, res, next) {
+  var hotelList = [];
+  sql = "SELECT * FROM Hotel";
+
+  con.connect(function(err) {
+    con.query(sql, function(err, hotelList){
+  		if (err) throw err;
+      res.render('hotels', { title: 'Hulton Hotel Management', hotelListing: JSON.stringify(hotelList) });
+  	});
+  });
+});
 
 router.get('/rooms/:id', function(req, res, next) {
     var roomList = [];

@@ -59,7 +59,7 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
-<% roomList = JSON.parse(roomListing); console.log(roomListing)%>
+<% roomList = JSON.parse(roomListing);%>
 <div class="container-fluid">
     <div class="row">
         <% roomList.forEach(function(room, index) { %>
@@ -72,8 +72,11 @@
                           <%=room['Description'] %>
                       </ul>
                   </li>
-                  <li class="list-group-item ">Price: <%=room['Price'] %></li>
-                  <li class="list-group-item"> Reviews
+                  <li class="list-group-item ">Price: $<%=room['Price'] %></li>
+                  <li class="list-group-item"> Reviews:
+                      <% if(room['Reviews'].length == 0){ %>
+                      No reviews yet!
+                      <% } %>
                       <ul>
                         <% room['Reviews'].forEach(function(review, index) { %>
                           <li><%= review['TextComment'] %></li>
