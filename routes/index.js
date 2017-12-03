@@ -34,15 +34,16 @@ function getRoomReviews(result, req, callback){
 }
 
 function checkValidity(data, callback){
-	var match = 0;
-	if(data.password==data.conf.confPassword) match=1;
-	callback(match);
+	var valid = 1;
+	if(data.name==""||data.email==""||data.phone==""||data.email==""||data.password==""||data.confpassword=="") valid=0;
+	if(data.password!=data.confpassword) valid=0;
+	callback(valid);
 }
 
 function registerUser(data, callback){
-	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"','"+data.password+"');"
-	checkValidity(data, function(match){
-		if(match) {con.query(query, function(err, rows){
+	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"','"+data.phone+"','"+data.email+"','"+data.password+"');"
+	checkValidity(data, function(valid){
+		if(valid) {con.query(query, function(err, rows){
 			if (err) throw err;
 			console.log("1 Record inserted");
 			callback();
