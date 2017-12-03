@@ -9,7 +9,7 @@ RegisterUser.addEventListener('submit', (e) => {
 })
 
 function post (path, data) {
-    console.log("Posting:\npath: "+path +"\n data: "+data+"\n");
+    console.log("Posting:\npath: "+path +"\n data: "+JSON.stringify(data)+"\n");
     return window.fetch(path, {
         method: 'POST',
         headers: {

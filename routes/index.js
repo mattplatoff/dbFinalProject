@@ -5,7 +5,7 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "password",
+  password: "1234",
   database: "hulton_hotels"
 });
 
@@ -44,6 +44,17 @@ function getRoomReviews(result, req, callback){
   });
 }
 
+function registerUser(data, callback){
+	con.connect();
+	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"');"
+	con.query(query, function(err, rows){
+		if (err) throw err;
+		console.log("1 Record inserted");
+		con.end();
+		callback();
+	});
+};
+
 router.get('/rooms/:id', function(req, res, next) {
     var roomList = [];
     sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
@@ -59,5 +70,10 @@ router.get('/myaccount', function(req, res, next) {
     res.render('myaccount', { title: 'Hulton Hotel Management' });
 });
 
+router.post('/registerUser', function(req, res, next) {
+	registerUser(req.body, function(){
+		res.render('index', {title: "Hulton Hotel Management"});
+	});
+});
 
 module.exports = router;
