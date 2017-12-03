@@ -44,14 +44,20 @@ function getRoomReviews(result, req, callback){
   });
 }
 
+function checkPassword(pass1, pass2, callback){
+	var match = 0;
+	if(pass1==pass2) match=1;
+	callback(match);
+}
+
 function registerUser(data, callback){
-	con.connect();
-	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"');"
-	con.query(query, function(err, rows){
-		if (err) throw err;
-		console.log("1 Record inserted");
-		con.end();
-		callback();
+	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, password) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"','"+data.password+"');"
+	checkPassword(data.password, data.confpassword, function(match){
+		if(match) {con.query(query, function(err, rows){
+			if (err) throw err;
+			console.log("1 Record inserted");
+			callback();
+		});}
 	});
 };
 
