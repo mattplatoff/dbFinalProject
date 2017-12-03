@@ -61,7 +61,6 @@ router.get('/hotels', function(req, res, next) {
 
   con.connect(function(err) {
     con.query(sql, function(err, hotelList){
-  		if (err) throw err;
       res.render('hotels', { title: 'Hulton Hotel Management', hotelListing: JSON.stringify(hotelList) });
   	});
   });
