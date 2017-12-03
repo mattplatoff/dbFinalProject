@@ -8,7 +8,7 @@ CREATE TABLE Hotel(
 
 CREATE TABLE Customer(
         CID int PRIMARY KEY AUTO_INCREMENT, Email varchar(50), Address varchar(50), Phone_no int,
-        Name varchar(30));
+        Name varchar(30), Password varchar(25));
 
 CREATE TABLE CreditCard(
         Cnumber int PRIMARY KEY, BillingAddr varchar(50), Name varchar(30),

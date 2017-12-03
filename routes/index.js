@@ -5,7 +5,7 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "password",
+  password: "1234",
   database: "hulton_hotels"
 });
 
@@ -33,15 +33,15 @@ function getRoomReviews(result, req, callback){
   });
 }
 
-function checkPassword(pass1, pass2, callback){
+function checkValidity(data, callback){
 	var match = 0;
-	if(pass1==pass2) match=1;
+	if(data.password==data.conf.confPassword) match=1;
 	callback(match);
 }
 
 function registerUser(data, callback){
-	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, password) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"','"+data.password+"');"
-	checkPassword(data.password, data.confpassword, function(match){
+	var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"',"+data.phone+",'"+data.email+"','"+data.password+"');"
+	checkValidity(data, function(match){
 		if(match) {con.query(query, function(err, rows){
 			if (err) throw err;
 			console.log("1 Record inserted");
