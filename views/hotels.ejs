@@ -60,17 +60,19 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+<input name="loc" class="form-control" id="search" style="width:80%;margin:0 auto" type="text"  placeholder="Location: City, State, Zip">
+<br />
 <% hotelList = JSON.parse(hotelListing);%>
 <div class="container-fluid">
     <div class="row">
       <% hotelList.forEach(function(hotel, index) { %>
-        <div class="col-md-4">
+        <div class="hotel-container col-md-4">
             <ul class="list-group">
                 <li class="list-group-item active" style="padding-bottom:20px;">
                   Hotel (Id <%= hotel['HotelID']%>)
                   <button style="float:right;" type="button" onclick="location.href='rooms/<%=hotel['HotelID']%>'" data-hotel-id="<%=hotel['HotelID']%>" class="btn btn-default">View rooms!</button>
                 </li>
-                <li class="list-group-item "><%= hotel['City'] %>, <%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %></li>
+                <li class="list-group-item "><%= hotel['City'] %>, <div class="hotel-location"><%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %><div></li>
                 <li class="list-group-item">Phone: <%= hotel['Phone_no']%></li>
                 <li class="list-group-item"><b>Amenities</b>
                     <ul class="list-group">
@@ -113,6 +115,24 @@
     </div>
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+$(document).on("keyup", "#search", function(e) {
+    $(".hotel-container").each(function(){
+      console.log($(this).find('.hotel-location').text());
+      console.log($('#search').val());
+
+      if($(this).find('.hotel-location').text().toLowerCase().indexOf($('#search').val().toLowerCase()) !== -1){
+        console.log("show")
+        $(this).show();
+      }
+      else{
+        console.log("dont show")
+        $(this).hide();
+      }
+      console.log("???");
+    });
+});
+</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/hotels.js"></script>
 </body>
