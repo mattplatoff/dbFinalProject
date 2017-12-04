@@ -10,15 +10,52 @@ var con = mysql.createConnection({
 });
 
 //REGION CALLBACKS
+
+function getServiceReviews(services, callback){
+  var serviceList = [];
+  services.forEach(function(service, index){
+    var sql = "SELECT * FROM `Review-Writes` WHERE HotelID = " + service['HotelID'] + " AND sType = '" + service['sType'] + "'";
+    con.query(sql, function (err, reviews) {
+      service['Reviews'] = reviews;
+      if(!reviews){
+        service['Reviews'] = [];
+      }
+      serviceList.push(service);
+      if (services.length - 1 == index){
+        callback(serviceList);
+      }
+    });
+  });
+}
+
 function getHotelServices(hotelList, callback){
   var hotelListing = [];
   hotelList.forEach(function(hotelRecord, index){
     var sql = "SELECT * FROM Service WHERE HotelID = " + hotelRecord['HotelID'];
     con.query(sql, function (err, services) {
-      hotelRecord['Services'] = services;
-      hotelListing.push(hotelRecord);
-      if (hotelList.length - 1 == index){
-        callback(hotelListing);
+      getServiceReviews(services, function(serviceList){
+        hotelRecord['Services'] = serviceList;
+        hotelListing.push(hotelRecord);
+        if (hotelList.length - 1 == index){
+          callback(hotelListing);
+        }
+     });
+   });
+ });
+}
+
+function getBreakfastReviews(breakfasts, callback){
+  var breakfastList = [];
+  breakfasts.forEach(function(breakfast, index){
+    var sql = "SELECT * FROM `Review-Writes` WHERE HotelID = " + breakfast['HotelID'] + " AND bType = '" + breakfast['bType'] + "'";
+    con.query(sql, function (err, reviews) {
+      breakfast['Reviews'] = reviews;
+      if(!reviews){
+        breakfast['Reviews'] = [];
+      }
+      breakfastList.push(breakfast);
+      if (breakfasts.length - 1 == index){
+        callback(breakfastList);
       }
     });
   });
@@ -29,12 +66,13 @@ function getHotelBreakfasts(hotels, callback){
   hotels.forEach(function(hotelRecord, index){
     var sql = "SELECT * FROM Breakfast WHERE HotelID = " + hotelRecord['HotelID'];
     con.query(sql, function (err, breakfasts) {
-      console.log(JSON.stringify(breakfasts));
-      hotelRecord['Breakfasts'] = breakfasts;
-      hotelListing.push(hotelRecord);
-      if (hotels.length - 1 == index){
-        callback(hotelListing);
-      }
+      getBreakfastReviews(breakfasts, function(breakfastList){
+        hotelRecord['Breakfasts'] = breakfastList;
+        hotelListing.push(hotelRecord);
+        if (hotels.length - 1 == index){
+          callback(hotelListing);
+        }
+     });
     });
   });
 }

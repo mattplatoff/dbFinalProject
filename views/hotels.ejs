@@ -80,7 +80,14 @@
                           <% } %>
                           <ul>
                             <% hotel['Breakfasts'].forEach(function(breakfast, index) { %>
-                              <li><%= breakfast['bType'] %> - <%= breakfast['Description'] %></li>
+                              <li>
+                                <%= breakfast['bType'] %> - <%= breakfast['Description'] %> ($<%= breakfast['bPrice'] %>)
+                                <ul>
+                                  <% breakfast['Reviews'].forEach(function(review) { %>
+                                    <li style="list-style: none;"> <%= review['Rating']%>/10 <%= review['TextComment']%> </li>
+                                  <% }); %>
+                                </ul>
+                              </li>
                             <% }); %>
                           </ul>
                         </li>
@@ -90,7 +97,12 @@
                           <% } %>
                           <ul>
                             <% hotel['Services'].forEach(function(service, index) { %>
-                              <li><%= service['sType'] %></li>
+                              <li><%= service['sType'] %> ($<%= service['sCost'] %>)</li>
+                              <ul>
+                                <% service['Reviews'].forEach(function(review) { %>
+                                  <li style="list-style: none;"> <%= review['Rating']%>/10 <%= review['TextComment']%> </li>
+                                <% }); %>
+                              </ul>
                             <% }); %>
                           </ul>
                         </li>
