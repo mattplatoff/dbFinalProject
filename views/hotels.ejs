@@ -72,29 +72,29 @@
                 </li>
                 <li class="list-group-item "><%= hotel['City'] %>, <%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %></li>
                 <li class="list-group-item">Phone: <%= hotel['Phone_no']%></li>
-                <li class="list-group-item">Amenities
+                <li class="list-group-item"><b>Amenities</b>
                     <ul class="list-group">
-                        <li class="list-group-item">Breakfast Types:
-                            <ul class="list-group">
-                                <li class=list-group-item>continental</li>
-
-                                <li class="list-group-item"><span class="badge button"> review</span>english</li>
-                            </ul>
+                        <li class="list-group-item">Breakfasts Offered:
+                          <% if(hotel['Breakfasts'].length == 0){ %>
+                          No breakfasts offered.
+                          <% } %>
+                          <ul>
+                            <% hotel['Breakfasts'].forEach(function(breakfast, index) { %>
+                              <li><%= breakfast['bType'] %> - <%= breakfast['Description'] %></li>
+                            <% }); %>
+                          </ul>
                         </li>
-                        <li class="list-group-item">Other Services:
-                            <ul class="list-group">
-                                <li class="list-group-item">Parking</li>
-                                <li class="list-group-item">Laundry</li>
-                            </ul>
+                        <li class="list-group-item">Services Offered:
+                          <% if(hotel['Services'].length == 0){ %>
+                          No services offered.
+                          <% } %>
+                          <ul>
+                            <% hotel['Services'].forEach(function(service, index) { %>
+                              <li><%= service['sType'] %></li>
+                            <% }); %>
+                          </ul>
                         </li>
                     </ul></li>
-                <li class="list-group-item"> Reviews
-                    <ul class="list-group">
-                        <li class="list-group-item">Great Hotel!</li>
-                        <li class="list-group-item"> Loved it!</li>
-                    </ul>
-                </li>
-
             </ul>
         </div>
         <% }); %>
