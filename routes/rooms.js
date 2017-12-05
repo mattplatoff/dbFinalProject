@@ -38,9 +38,14 @@ router.get('/:id', function(req, res, next) {
 
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
+			//create another callback for determining when rooms are booked
             res.render('rooms', { title: 'Hulton Hotel Management', roomListing: JSON.stringify(roomList)});
         });
     });
+});
+
+router.post('/reserve', function(req, res, next) {
+    res.render('rooms', { title: 'Hulton Hotel Management');
 });
 
 module.exports = router;
