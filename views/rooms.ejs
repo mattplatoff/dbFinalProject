@@ -65,7 +65,7 @@
         <% roomList.forEach(function(room, index) { %>
           <div class="col-md-6">
               <ul class="list-group">
-                  <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %></li>
+                  <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %> <button type="button" data-toggle="modal" data-target="#reserveModal"  class='btn btn default' style='float:right'>Reserve</button></li>
                   <li class="list-group-item ">For up to <%=room['Capacity'] %> residents</li>
                   <li class="list-group-item">
                       <ul class="list-group">
@@ -89,7 +89,47 @@
         <% }); %>
     </div>
 </div>
+<!--modal-->
+  <div id="reserveModal" tabindex="-1" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3 id="myModalLabel">Make a reservation</h3>
+    </div>
+        <form action="/reserve" method="post" id="reservationForm">
+        <div class="modal-body">
+      <h4>Please select a reservation period, breakfast, and service quantity.</h4>
+      <div class="form-group">
+      <!-- datepicker for startdate, pay attention to already reserved dates and discount dates -->
+      </div>
+      <div class="form-group">
+      <!-- datepicker for enddate, pay attention to already reserved dates and discount dates  -->
+      </div>
+      <div class="form-group">
+      <!-- foreach breakfast, create a textbox for quantity of each breakfast  -->
+      </div>
+      <div class="form-group">
+	  <!-- foreach service, create a texbox for quantity of each service  -->
+      </div>
+	   <div class="form-group">
+	  <!-- dropdown with credit cards to choose from  -->
+      </div>
+	  <div id='reservationPrice'><!-- constantly updating price based on reservation period, breakfast, and service  --></div>
+      </div>
+	  <!-- hidden field with CID -->
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset()" aria-hidden="true">Close</button>
+      <button type="sumbit" class="btn btn-primary">Submit</button>
+    </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/rooms.js"></script>
 </body>
