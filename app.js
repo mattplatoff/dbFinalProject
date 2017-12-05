@@ -4,9 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var index = require('./routes/index');
+var myaccount = require('./routes/myaccount');
+var hotels = require('./routes/hotels');
+var rooms = require('./routes/rooms');
+var registerUser = require('./routes/registerUser');
+
 var RoomModel = require('./roommodel.js');
+var UserModel= require('./usermodel');
 
 var app = express();
 var mysql = require('mysql'); 
@@ -22,15 +29,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: "Super Secret Fam"}));
 
 app.use('/', index);
+app.use('/myaccount',myaccount);
+app.use('/hotels',hotels);
+app.use('/rooms',rooms);
+app.use('/registerUser', registerUser);
 
-app.use('/registerUser', function(req, res) {
-    console.log("Registration post request:\n name: "
-        +req.body.name+"\n address: "
-        +req.body.address+"\n email: "+
-        req.body.email+ "\n phone: "+req.body.phone);
-});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

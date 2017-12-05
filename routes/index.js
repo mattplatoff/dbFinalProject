@@ -155,39 +155,37 @@ function registerUser(data, callback){
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Hulton Hotel Management' });
 });
-router.get('/hotels', function(req, res, next) {
-  var hotelList = [];
-  sql = "SELECT * FROM Hotel";
-  con.connect(function(err) {
-    con.query(sql, function(err, hotelList){
-      getHotelServices(hotelList, function(hotels){
-        getHotelBreakfasts(hotels, function(hotelList_){
-          res.render('hotels', { title: 'Hulton Hotel Management', hotelListing: JSON.stringify(hotelList_) });
-        });
-      });
-  	});
-  });
-});
-
-router.get('/rooms/:id', function(req, res, next) {
-    var roomList = [];
-    sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
-
-    con.connect(function(err) {
-      getRoomReviews(sql, req, function(roomList){
-        res.render('rooms', { title: 'Hulton Hotel Management', roomListing: JSON.stringify(roomList)});
-      });
-    });
-});
-
-router.get('/myaccount', function(req, res, next) {
-    res.render('myaccount', { title: 'Hulton Hotel Management' });
-});
-
-router.post('/registerUser', function(req, res, next) {
-	registerUser(req.body, function(){
-		res.render('index', {title: "Hulton Hotel Management"});
-	});
-});
+// router.get('/hotels', function(req, res, next) {
+//   var hotelList = [];
+//   sql = "SELECT * FROM Hotel";
+//   con.connect(function(err) {
+//     con.query(sql, function(err, hotelList){
+//       getHotelServices(hotelList, function(hotels){
+//         getHotelBreakfasts(hotels, function(hotelList_){
+//           res.render('hotels', { title: 'Hulton Hotel Management', hotelListing: JSON.stringify(hotelList_) });
+//         });
+//       });
+//   	});
+//   });
+// });
+//
+// router.get('/rooms/:id', function(req, res, next) {
+//     var roomList = [];
+//     sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
+//
+//     con.connect(function(err) {
+//       getRoomReviews(sql, req, function(roomList){
+//         res.render('rooms', { title: 'Hulton Hotel Management', roomListing: JSON.stringify(roomList)});
+//       });
+//     });
+// });
+//
+//
+//
+// router.post('/registerUser', function(req, res, next) {
+// 	registerUser(req.body, function(){
+// 		res.render('index', {title: "Hulton Hotel Management"});
+// 	});
+// });
 
 module.exports = router;
