@@ -158,7 +158,6 @@ router.get('/', function(req, res, next) {
 router.get('/hotels', function(req, res, next) {
   var hotelList = [];
   sql = "SELECT * FROM Hotel";
-
   con.connect(function(err) {
     con.query(sql, function(err, hotelList){
       getHotelServices(hotelList, function(hotels){

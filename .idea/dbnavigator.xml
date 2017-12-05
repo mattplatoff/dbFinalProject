@@ -23,7 +23,11 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="3e028383-311b-499f-a3bd-4db7de22e6af">
+        <schema name="mysql" object-types="column, table, view" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="3e028383-311b-499f-a3bd-4db7de22e6af">
@@ -34,6 +38,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.FileConnectionMappingManager">
+    <mapping file-url="file://$PROJECT_DIR$/Hotel Database Data.sql" connection-id="3e028383-311b-499f-a3bd-4db7de22e6af" current-schema="mysql" />
     <mapping file-url="file://$PROJECT_DIR$/dbFinalProject.sql" connection-id="3e028383-311b-499f-a3bd-4db7de22e6af" current-schema="mysql" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
@@ -52,7 +57,9 @@
     <filters />
   </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
-    <recently-used-interfaces />
+    <recently-used-interfaces>
+      <mapping database-type="MYSQL" interface-id="DEFAULT" />
+    </recently-used-interfaces>
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
