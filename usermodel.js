@@ -1,13 +1,12 @@
-var UserModel =  function(name,email,address,phonenumber) {
-    this.name=name;
+var UserModel =  function(uid,email,account_type) {
     this.email=email;
-    this.address=address;
-    this.phonenumber=phonenumber;
+    this.uid=uid;
+    this.account_type=account_type;
+
 }
 
-UserModel.prototype.name="";
 UserModel.prototype.email="";
-UserModel.prototype.address="";
-UserModel.prototype.phonenumber="";
+UserModel.prototype.uid=-1;
+UserModel.prototype.account_type=-1;
 
 module.exports=UserModel;

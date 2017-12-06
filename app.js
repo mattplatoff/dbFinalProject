@@ -11,6 +11,7 @@ var myaccount = require('./routes/myaccount');
 var hotels = require('./routes/hotels');
 var rooms = require('./routes/rooms');
 var registerUser = require('./routes/registerUser');
+var login = require('./routes/login');
 
 var RoomModel = require('./roommodel.js');
 var UserModel= require('./usermodel');
@@ -26,7 +27,7 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: "Super Secret Fam"}));
@@ -36,6 +37,7 @@ app.use('/myaccount',myaccount);
 app.use('/hotels',hotels);
 app.use('/rooms',rooms);
 app.use('/registerUser', registerUser);
+app.use('/login',login);
 
 
 // catch 404 and forward to error handler

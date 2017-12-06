@@ -6,6 +6,9 @@ CREATE TABLE Hotel(
         HotelID int PRIMARY KEY, Phone_no varchar(10), Street varchar(30),
         City varchar(30), State varchar(30), Country varchar(30), ZIP int);
 
+CREATE TABLE Users(UID int PRIMAIRY KEY AUTO_INCREMENT, Email varchar(50),
+        Password varchar(25), account_type int);
+
 CREATE TABLE Customer(
         CID int PRIMARY KEY AUTO_INCREMENT, Email varchar(50), Address varchar(50), Phone_no int,
         Name varchar(30), Password varchar(25));
