@@ -10,14 +10,14 @@ var index = require('./routes/index');
 var myaccount = require('./routes/myaccount');
 var hotels = require('./routes/hotels');
 var rooms = require('./routes/rooms');
-var registerUser = require('./routes/registerUser');
+var registerUser = require('./routes/registeruser');
 var login = require('./routes/login');
 
 var RoomModel = require('./roommodel.js');
 var UserModel= require('./usermodel');
 
 var app = express();
-var mysql = require('mysql'); 
+var mysql = require('mysql');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -13,73 +13,62 @@
     <title><%=title%></title>
 </head>
 <body style="padding-top: 70px">
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topFixedNavbar1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-            <a class="navbar-brand" href="/">Hulton Hotel Management</a></div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="topFixedNavbar1">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/myaccount">My Account<span class="sr-only">(current)</span></a></li>
-                <li><a href="/hotels">Hotels</a></li>
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Link</a></li>
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/"><%=title%></a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/myaccount">My Account<span class="sr-only">(current)</span></a></li>
+          <li><a href="/hotels">Hotels</a></li>
+        </ul>
+        <form id="signin" class="navbar-form navbar-right">
+          <div class="form-group">
+            <input name="email" id="loginemail" type="text" placeholder="Email" class="form-control">
+          </div>
+          <div class="form-group">
+            <input name="password" id="loginpassword" type="password" placeholder="Password" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-success">Sign in</button>
+        <a role="button" class="btn btn-info" data-target="#registrationModal" data-toggle="modal">Register</a>
+        </form>
+      </div>
     </div>
-    <!-- /.container-fluid -->
-</nav>
+  </nav>
 <% roomList = JSON.parse(roomListing);%>
-<div class="container-fluid">
+<div class="container">
+  <div class="row">
+    <button type="button" id="bCart" style="float:right" class="btn btn-primary">Cart</button>
+    <br ><br>
+  </div>
     <div class="row">
         <% roomList.forEach(function(room, index) { %>
-          <div class="col-md-6">
+          <div class="col-md-4">
               <ul class="list-group">
-                  <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %></li>
-                  <li class="list-group-item ">For up to <%=room['Capacity'] %> residents</li>
-                  <li class="list-group-item">
-                      <ul class="list-group">
-                          <%=room['Description'] %>
-                      </ul>
+                  <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %>
+                  <button class="btn btn-default bReserve" data-room='<%= room['Room_no'] %>' data-hotel='<%= room['HotelID'] %>' style="float:right;">Add room to cart</button>
+                  <br />
+                  <b>$<%=room['Price'] %></b>
                   </li>
-                  <li class="list-group-item ">Price: $<%=room['Price'] %></li>
+                  <li class="list-group-item ">
+                  <i>For up to <%=room['Capacity'] %> residents</i>
+                  <br />
+                  <h4>-<%=room['Description'] %></h4>
+                  </li>
                   <li class="list-group-item"> Reviews:
                       <% if(room['Reviews'].length == 0){ %>
                       No reviews yet!
                       <% } %>
                       <ul>
                         <% room['Reviews'].forEach(function(review, index) { %>
-                          <li><%= review['TextComment'] %></li>
+                          <li style="list-style:none"><%= review['Rating'] %>/10 <%= review['TextComment'] %></li>
                         <% }); %>
                       </ul>
                   </li>
@@ -90,6 +79,47 @@
     </div>
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+function setCartCookie(value) {
+    document.cookie = "cartcookie=" + value + ";";
+}
+
+function appendCartCookie(value) {
+    document.cookie = "cartcookie=" + getCartCookie() + "|" + value + ';';
+}
+
+function getCartCookie() {
+    var name = "cartcookie=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+$('.bReserve').click(function(){
+  var hotelID = $(this).attr('data-hotel');
+  var roomID = $(this).attr('data-room');
+  var cookie = getCartCookie();
+  if(!cookie){
+    setCartCookie(hotelID + ',' + roomID);
+  }
+  else{
+    appendCartCookie(hotelID + ',' + roomID);
+  }
+});
+
+$('#bCart').click(function(){
+  alert(getCartCookie());
+});
+
+</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/rooms.js"></script>
 </body>
