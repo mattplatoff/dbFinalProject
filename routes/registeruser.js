@@ -14,10 +14,13 @@ function checkEmail(data, callback){
     var query = "SELECT Email FROM Users"
     con.query(query, function(err, result){
         if (err) throw err;
-        result.forEach(function(record, index){
-            if(record['Email']==data.email) emailexists = 1;
-            if(emailexists || result.length - 1 == index) callback(emailexists);
-        });
+        if(result.length == 0) callback(emailexists);
+        else{
+            result.forEach(function(record, index){
+                if(record['Email']==data.email) emailexists = 1;
+                if(emailexists || result.length - 1 <= index) callback(emailexists);
+            });
+        }
     });
 }
 
@@ -26,8 +29,8 @@ function checkValidity(data, callback){
     //passwords don't match = 0
     //a field was empty = 2
     //email already exists in db = 3;
-
     var valid = 1;
+    console.log("test");
     if(data.name==""||data.email==""||data.phone==""||data.email==""||data.password==""||data.confpassword=="") valid=2;
     checkEmail(data, function(exists){
         if(exists) valid = 3;
