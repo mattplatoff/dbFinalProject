@@ -20,10 +20,23 @@ function checkLogedIn(req, res,next){
     }
 }
 
+function getCustomerData(email,callback){
+    var query= "SELECT * FROM Customers WHERE Email = '"+email+"';";
+    var cusData={};
+    console.log("customer data query = "+query);
+    con.connect(query,function(err,result) {
+        console.log("customer data after query: " + JSON.stringify(result));
+        cusData={name:result['Name'],address:result['Address'],phone:result['Phone_no'],email:result['Email']}
+
+    });
+    callback(cusData);
+}
+
 router.get('/', checkLogedIn, function(req, res, next) {
     var reservationlist = [];
-
-    res.render('myaccount', { title: 'Hulton Hotel Management' });
+    getCustomerData(req.session.user.email,function(cusData){
+        res.render('myaccount', { title: 'Hulton Hotel Management',user:cusData});
+    });
 });
 
 module.exports = router;

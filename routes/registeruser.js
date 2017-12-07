@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 function checkEmail(data, callback){
     var emailexists = 0;
-    var query = "SELECT Email FROM Users"
+    var query = "SELECT Email FROM Users";
     con.query(query, function(err, result){
         if (err) throw err;
         if(result.length == 0) callback(emailexists);

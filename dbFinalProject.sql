@@ -1,4 +1,4 @@
-DROP DATABASE hulton_hotels;
+DROP DATABASE hulton_hotels IF EXISTS;
 CREATE DATABASE hulton_hotels;
 USE hulton_hotels;
 
