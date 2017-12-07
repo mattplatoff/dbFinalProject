@@ -21,21 +21,23 @@ function checkLogedIn(req, res,next){
 }
 
 function getCustomerData(email,callback){
-    var query= "SELECT * FROM Customers WHERE Email = '"+email+"';";
-    var cusData={};
+    var query= "SELECT * FROM Customer WHERE Email = '"+email+"';";
     console.log("customer data query = "+query);
-    con.connect(query,function(err,result) {
+    con.query(query,function(err,result) {
+        if (err) throw err;
         console.log("customer data after query: " + JSON.stringify(result));
-        cusData={name:result['Name'],address:result['Address'],phone:result['Phone_no'],email:result['Email']}
-
+       // var cusData={name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']};
+        callback({name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']});
     });
-    callback(cusData);
+
 }
 
 router.get('/', checkLogedIn, function(req, res, next) {
     var reservationlist = [];
+    console.log("email= "+req.session.user.email);
     getCustomerData(req.session.user.email,function(cusData){
-        res.render('myaccount', { title: 'Hulton Hotel Management',user:cusData});
+        console.log("wtf is going on"+JSON.stringify(cusData));
+        res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData});
     });
 });
 
