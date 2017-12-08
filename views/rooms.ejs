@@ -45,7 +45,7 @@
 <% roomList = JSON.parse(roomListing);%>
 <div class="container">
   <div class="row">
-    <button type="button" id="bCart" style="float:right" class="btn btn-primary">Cart</button>
+    <button type="button" id="bCart" style="float:right" data-toggle="modal" data-target="#reserveModal" class="btn btn-primary">Cart</button>
     <br ><br>
   </div>
     <div class="row">
@@ -77,15 +77,62 @@
           </div>
         <% }); %>
     </div>
+    <div id="reserveModal" tabindex="-1" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3>Make a reservation</h3>
+        </div>
+        <form action="/reserve" method="post" id="reservationForm">
+          <div class="modal-body">
+            <h4>Please select a reservation period, breakfast, and service quantity.</h4>
+            <div id="cartRoom" class="form-group">
+            </div>
+            <div class="form-group">
+            3<!-- foreach breakfast, create a textbox for quantity of each breakfast  -->
+            </div>
+            <div class="form-group">
+      	    4<!-- foreach service, create a texbox for quantity of each service  -->
+            </div>
+       	    <div class="form-group">
+      	    5<!-- dropdown with credit cards to choose from  -->
+            </div>
+      	    <div id='reservationPrice'>
+            6<!-- constantly updating price based on reservation period, breakfast, and service  -->
+            </div>
+      	     <!-- hidden field with CID -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset()" aria-hidden="true">Close</button>
+            <button type="sumbit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+  </div>
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
+$(function(){
+  updateCart();
+});
 function setCartCookie(value) {
-    document.cookie = "cartcookie=" + value + ";";
+    document.cookie = "cartcookie=|" + value + ";";
+}
+
+function removeCartCookie(value){
+  var location = getCartCookie().indexOf(value);
+  if(location != -1){
+    document.cookie = "cartcookie=" + getCartCookie().replace("|" + value,"");
+  }
+  updateCart();
 }
 
 function appendCartCookie(value) {
-    document.cookie = "cartcookie=" + getCartCookie() + "|" + value + ';';
+   if(getCartCookie().indexOf(value) == -1){
+     document.cookie = "cartcookie=" + getCartCookie() + "|" + value + ';';
+   }
+   updateCart();
 }
 
 function getCartCookie() {
@@ -103,6 +150,27 @@ function getCartCookie() {
     return "";
 }
 
+function updateCart(){
+  var rooms = getCartCookie().split('|');
+  $('#cartRoom').empty();
+  rooms.forEach(function(room, index){
+    if(index == 0){
+    return;
+    }
+    var r = room.split(',');
+    $('#cartRoom').append('<div class="form-group"><b>Room ' + r[1] + ' in Hotel ' + r[0] +
+    '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
+    '<br/><div class="col-md-5">Start Date<br/><input type="date" class="sdate col-md-4 form-control" /></div>' +
+    '<div class="col-md-5">End Date<br/><input type="date" class="edate form-control" /></div>' +
+    '</div><div class="clearfix"></div><hr/>');
+  });
+}
+
+$('body').on("click", ".delRoom", function(){
+  console.log($(this).attr('data-remove'));
+  removeCartCookie($(this).attr('data-remove'));
+});
+
 $('.bReserve').click(function(){
   var hotelID = $(this).attr('data-hotel');
   var roomID = $(this).attr('data-room');
@@ -113,10 +181,6 @@ $('.bReserve').click(function(){
   else{
     appendCartCookie(hotelID + ',' + roomID);
   }
-});
-
-$('#bCart').click(function(){
-  alert(getCartCookie());
 });
 
 </script>

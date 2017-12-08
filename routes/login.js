@@ -20,7 +20,7 @@ function logIn(req,res){
         res(status);
     }
     else {
-     var query = "SELECT * FROM USERS WHERE Email= \""+req.body.email+"\";";
+     var query = "SELECT * FROM Users WHERE Email= \""+req.body.email+"\";";
      var status=0;
         console.log("query = " + query);
      con.query(query, function(err, result){

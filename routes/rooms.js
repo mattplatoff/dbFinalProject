@@ -38,7 +38,11 @@ router.get('/:id', function(req, res, next) {
 
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
-            res.render('rooms', { title: 'Hulton Hotel Management', roomListing: JSON.stringify(roomList)});
+           console.log(JSON.stringify(req.session.user));
+            res.render('rooms', { title: 'Hulton Hotel Management',
+                                  user: JSON.stringify(req.session.user),
+                                  roomListing: JSON.stringify(roomList)
+                                });
         });
     });
 });
