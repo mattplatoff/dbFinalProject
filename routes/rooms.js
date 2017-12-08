@@ -31,11 +31,29 @@ function getRoomReviews(result, req, callback){
         });
     });
 }
+router.post('/rooms/breakfast/:id', function(req, res, next){
+  var breakfastSQL = "SELECT * FROM Breakfast WHERE HotelID = " + req.params.id;
+  con.connect(function(err) {
+    con.query(breakfastSQL, function (err, breakfasts) {
+        if(err) throw err;
+        res.send(JSON.stringify(breakfasts));
+    });
+  });
+});
+
+router.post('/rooms/services/:id', function(req, res, next){
+  var serviceSQL = "SELECT * FROM Service WHERE HotelID = " + req.params.id;
+  con.connect(function(err) {
+    con.query(serviceSQL, function (err, services) {
+        if(err) throw err;
+        res.send(JSON.stringify(services));
+    });
+  });
+});
 
 router.get('/:id', function(req, res, next) {
     var roomList = [];
     sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
-
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
            console.log(JSON.stringify(req.session.user));

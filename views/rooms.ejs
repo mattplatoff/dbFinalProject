@@ -53,7 +53,7 @@
           <div class="col-md-4">
               <ul class="list-group">
                   <li class="list-group-item active">Room <%= room['Room_no'] %> | <%=room['Type'] %> - Floor <%=room['Floor_no'] %>
-                  <button class="btn btn-default bReserve" data-room='<%= room['Room_no'] %>' data-hotel='<%= room['HotelID'] %>' style="float:right;">Add room to cart</button>
+                  <button class="btn btn-default bReserve" data-price='<%= room['Price'] %>' data-room='<%= room['Room_no'] %>' data-hotel='<%= room['HotelID'] %>' style="float:right;">Add room to cart</button>
                   <br />
                   <b>$<%=room['Price'] %></b>
                   </li>
@@ -90,16 +90,18 @@
             <div id="cartRoom" class="form-group">
             </div>
             <div class="form-group">
-            3<!-- foreach breakfast, create a textbox for quantity of each breakfast  -->
+              <div id="cartBreakfasts" class="form-group">
+              </div>
             </div>
             <div class="form-group">
-      	    4<!-- foreach service, create a texbox for quantity of each service  -->
+              <div id="cartServices" class="form-group">
+              </div>
             </div>
        	    <div class="form-group">
       	    5<!-- dropdown with credit cards to choose from  -->
             </div>
       	    <div id='reservationPrice'>
-            6<!-- constantly updating price based on reservation period, breakfast, and service  -->
+            <h4>Final Price: <span id="price"></span></h4>
             </div>
       	     <!-- hidden field with CID -->
           </div>
@@ -118,6 +120,7 @@ $(function(){
 });
 function setCartCookie(value) {
     document.cookie = "cartcookie=|" + value + ";";
+    updateCart();
 }
 
 function removeCartCookie(value){
@@ -151,6 +154,7 @@ function getCartCookie() {
 }
 
 function updateCart(){
+  //update room list
   var rooms = getCartCookie().split('|');
   $('#cartRoom').empty();
   rooms.forEach(function(room, index){
@@ -158,28 +162,89 @@ function updateCart(){
     return;
     }
     var r = room.split(',');
-    $('#cartRoom').append('<div class="form-group"><b>Room ' + r[1] + ' in Hotel ' + r[0] +
+    $('#cartRoom').append('<div class="form-group roomEntry" data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
     '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
     '<br/><div class="col-md-5">Start Date<br/><input type="date" class="sdate col-md-4 form-control" /></div>' +
     '<div class="col-md-5">End Date<br/><input type="date" class="edate form-control" /></div>' +
     '</div><div class="clearfix"></div><hr/>');
   });
+
+  //update breakfast list
+  $('#cartBreakfasts').empty();
+  $.post( 'rooms/breakfast/' + <%= roomList[0]['HotelID']%>, function(breakfasts) {
+       var breakfastList = JSON.parse(breakfasts);
+       $('#cartBreakfasts').append('<b>Breakfasts</b><br/>');
+       breakfastList.forEach(function(breakfast){
+          $('#cartBreakfasts').append('<div class="col-md-5"><i>' + breakfast['bType'] + '</i>' +
+          ' $' + breakfast['bPrice'] + '<input data-price=' + breakfast['bPrice']  + ' type="number" placeholder=" quantity" class="form-control bQuant" /></div>');
+       });
+       $('#cartBreakfasts').append('<div class="clearfix"></div>');
+  });
+
+  //update cart services
+  $('#cartServices').empty();
+  $.post( 'rooms/services/' + <%= roomList[0]['HotelID']%>, function(services) {
+       var serviceList = JSON.parse(services);
+       $('#cartServices').append('<b>Services</b><br/>');
+       serviceList.forEach(function(service){
+          $('#cartServices').append('<div class="col-md-5"><i>' + service['sType'] + '</i>' +
+          ' $' + service['sCost'] + '<input data-price=' + service['sCost']  + ' type="number" placeholder=" quantity" class="form-control sQuant" /></div>');
+       });
+       $('#cartServices').append('<div class="clearfix"></div>');
+  });
+
+  //update credit card list
+  updatePrice();
 }
 
+function updatePrice(){
+  //update final price
+  var price = 0;
+  $('.sQuant').each(function(){
+    price += Number($(this).attr('data-price')) * ($(this).val() || 0);
+  });
+  console.log("service price: " + price);
+  $('.bQuant').each(function(){
+    price += Number($(this).attr('data-price')) * ($(this).val() || 0);
+  });
+  console.log("service + breakfast price: " + price);
+
+  $('.roomEntry').each(function(){
+    if($(this).find('.sdate').val() != "" && $(this).find('.edate').val() != ""){
+      var sDateString = $(this).find('.sdate').val().split('-');
+      var sDate = new Date(sDateString[1] + '/' + sDateString[2] + '/' + sDateString[0]);
+      var eDateString = $(this).find('.edate').val().split('-');
+      var eDate = new Date(eDateString[1] + '/' + eDateString[2] + '/' + eDateString[0]);
+      var days = Math.round((eDate-sDate)/(1000*60*60*24));
+      console.log("roomprice: " + $(this).attr('data-price'));
+      console.log("roomdays: " + days);
+      price += Number(($(this).attr('data-price') * days));
+    }
+  });
+ console.log(price);
+  $('#price').val(price);
+  $('#price').text(price);
+}
+
+$('body').on("click",".sQuant, .bQuant, .sdate, .edate", function(){
+  console.log('changing');
+  updatePrice();
+});
+
 $('body').on("click", ".delRoom", function(){
-  console.log($(this).attr('data-remove'));
   removeCartCookie($(this).attr('data-remove'));
 });
 
 $('.bReserve').click(function(){
   var hotelID = $(this).attr('data-hotel');
   var roomID = $(this).attr('data-room');
+  var price = $(this).attr('data-price');
   var cookie = getCartCookie();
   if(!cookie){
-    setCartCookie(hotelID + ',' + roomID);
+    setCartCookie(hotelID + ',' + roomID+ ',' + price);
   }
   else{
-    appendCartCookie(hotelID + ',' + roomID);
+    appendCartCookie(hotelID + ',' + roomID+ ',' + price);
   }
 });
 
