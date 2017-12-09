@@ -51,18 +51,42 @@ router.post('/rooms/services/:id', function(req, res, next){
   });
 });
 
+function getCID(getCIDSQL, callback){
+  con.query(getCIDSQL, function (err, CIDs) {
+      if(err) throw err;
+      callback(CIDs[0]);
+  });
+}
+
+router.post('/rooms/cclist/:email', function(req, res, next){
+  var getCIDSQL = "SELECT CID FROM Customer WHERE Email = '" + req.params.email + "'";
+  con.connect(function(err){
+    getCID(getCIDSQL, function(CID){
+      var getCCSQL = "SELECT Cnumber, Type FROM CreditCard WHERE CID = " + CID['CID'];
+      con.query(getCCSQL, function (err, CCs) {
+          if(err) throw err;
+          res.send(JSON.stringify(CCs));
+      });
+    });
+  });
+});
+
 router.get('/:id', function(req, res, next) {
     var roomList = [];
     sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
-           console.log(JSON.stringify(req.session.user));
             res.render('rooms', { title: 'Hulton Hotel Management',
-                                  user: JSON.stringify(req.session.user),
+                                  userString: JSON.stringify(req.session.user),
                                   roomListing: JSON.stringify(roomList)
                                 });
         });
     });
+});
+
+router.post('/rooms/reserve', function(req, res, next) {
+    console.log(req.body);
+    res.send(req.body);
 });
 
 module.exports = router;

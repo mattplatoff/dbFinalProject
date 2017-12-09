@@ -29,20 +29,15 @@
           <li class="active"><a href="/myaccount">My Account<span class="sr-only">(current)</span></a></li>
           <li><a href="/hotels">Hotels</a></li>
         </ul>
-        <form id="signin" class="navbar-form navbar-right">
-          <div class="form-group">
-            <input name="email" id="loginemail" type="text" placeholder="Email" class="form-control">
-          </div>
-          <div class="form-group">
-            <input name="password" id="loginpassword" type="password" placeholder="Password" class="form-control">
-          </div>
-          <button type="submit" class="btn btn-success">Sign in</button>
-        <a role="button" class="btn btn-info" data-target="#registrationModal" data-toggle="modal">Register</a>
-        </form>
       </div>
     </div>
   </nav>
 <% roomList = JSON.parse(roomListing);%>
+<% user = null;
+    if (userString != undefined){
+      user = JSON.parse(userString);
+    }
+%>
 <div class="container">
   <div class="row">
     <button type="button" id="bCart" style="float:right" data-toggle="modal" data-target="#reserveModal" class="btn btn-primary">Cart</button>
@@ -84,7 +79,7 @@
           <button type="button" class="close" data-dismiss="modal">×</button>
           <h3>Make a reservation</h3>
         </div>
-        <form action="/reserve" method="post" id="reservationForm">
+        <form action="rooms/reserve" target="_blank" method="post" id="reservationForm">
           <div class="modal-body">
             <h4>Please select a reservation period, breakfast, and service quantity.</h4>
             <div id="cartRoom" class="form-group">
@@ -97,13 +92,14 @@
               <div id="cartServices" class="form-group">
               </div>
             </div>
-       	    <div class="form-group">
-      	    5<!-- dropdown with credit cards to choose from  -->
+       	    <div class="form-group" id="ccList">
             </div>
       	    <div id='reservationPrice'>
-            <h4>Final Price: <span id="price"></span></h4>
+            <h4>Final Price: $<span id="price"></span></h4>
             </div>
-      	     <!-- hidden field with CID -->
+            <% if (user != null){ %>
+              <input name="userEmail" type="hidden" id="userEmail" value="<%= user.email %>" />
+            <% } %>
           </div>
           <div class="modal-footer">
             <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset()" aria-hidden="true">Close</button>
@@ -117,6 +113,24 @@
 <script>
 $(function(){
   updateCart();
+
+  //if we are logged in
+  if($('#userEmail').length == 0 ){
+      $('#bCart').attr('disabled', 'disabled');
+      $('#bCart').text('Please log in to use the cart');
+  }
+
+  //get cc list
+  <% if (user) { %>
+    $.post( 'rooms/cclist/' + '<%= user.email %>', function(cclisting) {
+         var cclist = JSON.parse(cclisting);
+         $('#ccList').append('<b>Choose a card:</b><br/><select name="credit" id="credit" class="form-control">');
+         cclist.forEach(function(card){
+            $('#credit').append('<option value=' + card['Cnumber'] + '>' + card['Type'] + ' - ' + card['Cnumber'] + '</option>');
+         });
+         $('#credit').append('</select><div class="clearfix"></div>');
+    });
+  <% } %>
 });
 function setCartCookie(value) {
     document.cookie = "cartcookie=|" + value + ";";
@@ -164,8 +178,8 @@ function updateCart(){
     var r = room.split(',');
     $('#cartRoom').append('<div class="form-group roomEntry" data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
     '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
-    '<br/><div class="col-md-5">Start Date<br/><input type="date" class="sdate col-md-4 form-control" /></div>' +
-    '<div class="col-md-5">End Date<br/><input type="date" class="edate form-control" /></div>' +
+    '<br/><div class="col-md-5">Start Date<br/><input type="date" name="sdate|' + r[1] + '|' + r[0] + '" class="sdate col-md-4 form-control" /></div>' +
+    '<div class="col-md-5">End Date<br/><input type="date" name="edate|' + r[1] + '|' + r[0] + '" class="edate form-control" /></div>' +
     '</div><div class="clearfix"></div><hr/>');
   });
 
@@ -176,7 +190,7 @@ function updateCart(){
        $('#cartBreakfasts').append('<b>Breakfasts</b><br/>');
        breakfastList.forEach(function(breakfast){
           $('#cartBreakfasts').append('<div class="col-md-5"><i>' + breakfast['bType'] + '</i>' +
-          ' $' + breakfast['bPrice'] + '<input data-price=' + breakfast['bPrice']  + ' type="number" placeholder=" quantity" class="form-control bQuant" /></div>');
+          ' $' + breakfast['bPrice'] + ' <input name= ' + breakfast['bType'] + ' data-price=' + breakfast['bPrice']  + ' type="number" placeholder=" quantity" class="form-control bQuant" /></div>');
        });
        $('#cartBreakfasts').append('<div class="clearfix"></div>');
   });
@@ -188,7 +202,7 @@ function updateCart(){
        $('#cartServices').append('<b>Services</b><br/>');
        serviceList.forEach(function(service){
           $('#cartServices').append('<div class="col-md-5"><i>' + service['sType'] + '</i>' +
-          ' $' + service['sCost'] + '<input data-price=' + service['sCost']  + ' type="number" placeholder=" quantity" class="form-control sQuant" /></div>');
+          ' $' + service['sCost'] + '<input name= ' + service['sType'] + ' data-price=' + service['sCost']  + ' type="number" placeholder=" quantity" class="form-control sQuant" /></div>');
        });
        $('#cartServices').append('<div class="clearfix"></div>');
   });
@@ -203,11 +217,9 @@ function updatePrice(){
   $('.sQuant').each(function(){
     price += Number($(this).attr('data-price')) * ($(this).val() || 0);
   });
-  console.log("service price: " + price);
   $('.bQuant').each(function(){
     price += Number($(this).attr('data-price')) * ($(this).val() || 0);
   });
-  console.log("service + breakfast price: " + price);
 
   $('.roomEntry').each(function(){
     if($(this).find('.sdate').val() != "" && $(this).find('.edate').val() != ""){
@@ -216,18 +228,14 @@ function updatePrice(){
       var eDateString = $(this).find('.edate').val().split('-');
       var eDate = new Date(eDateString[1] + '/' + eDateString[2] + '/' + eDateString[0]);
       var days = Math.round((eDate-sDate)/(1000*60*60*24));
-      console.log("roomprice: " + $(this).attr('data-price'));
-      console.log("roomdays: " + days);
       price += Number(($(this).attr('data-price') * days));
     }
   });
- console.log(price);
   $('#price').val(price);
   $('#price').text(price);
 }
 
 $('body').on("click",".sQuant, .bQuant, .sdate, .edate", function(){
-  console.log('changing');
   updatePrice();
 });
 
