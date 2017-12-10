@@ -38,28 +38,48 @@ function checkValidity(data, callback){
     });
 }
 
+function accountType(data, callback){
+   var type = 0;
+    var i = 0;
+    for(;i < data.email.length; i++){
+        if(data.email[i] == "@"){
+            i++;
+            break;
+        }
+    }
+    console.log(i);
+    if(data.email.substring(i) == 'hultonhotels.com') type = 1;
+    callback(type)
+}
+
 function registerUser(data, callback){
-    var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"','"+data.phone+"','"+data.email+"','"+data.password+"');"
     //insert all users as type 1 users for now.
-    var userquery = "INSERT INTO Users (Email, Password, account_type) VALUE ('"+data.email+"','"+data.password+"',1);";
-   console.log("register user query="+userquery);
     checkValidity(data, function(valid){
-        console.log("valid = "+valid);
-        if(valid==1) {
-            console.log("valid registration");
-            con.query(query, function(err, rows){
-                if (err) throw err;
-                console.log("1 Record inserted");
-            });
-            con.query(userquery, function(err, rows){
-                if (err) throw err;
-                console.log("1 Record inserted");
-            });
-            callback();
-        }
-        else{
-            callback(valid);
-        }
+        accountType(data, function(type)
+        {
+            console.log("valid = "+valid);
+            console.log("type = "+type);
+            
+            var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"','"+data.phone+"','"+data.email+"','"+data.password+"');"
+            var userquery = "INSERT INTO Users (Email, Password, account_type) VALUE ('"+data.email+"','"+data.password+"',"+type+");";
+            console.log("register user query="+userquery);
+
+            if(valid==1) {
+                console.log("valid registration");
+                con.query(query, function(err, rows){
+                    if (err) throw err;
+                    console.log("1 Record inserted");
+                });
+                con.query(userquery, function(err, rows){
+                    if (err) throw err;
+                    console.log("1 Record inserted");
+                });
+                callback();
+            }
+            else{
+                callback(valid);
+            }
+        });
     });
 };
 

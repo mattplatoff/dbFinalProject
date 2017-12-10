@@ -12,6 +12,7 @@ var hotels = require('./routes/hotels');
 var rooms = require('./routes/rooms');
 var registerUser = require('./routes/registeruser');
 var login = require('./routes/login');
+var stats = require('./routes/stats');
 
 var RoomModel = require('./roommodel.js');
 var UserModel= require('./usermodel');
@@ -38,6 +39,7 @@ app.use('/hotels',hotels);
 app.use('/rooms',rooms);
 app.use('/registerUser', registerUser);
 app.use('/login',login);
+app.use('/stats', stats);
 
 
 // catch 404 and forward to error handler
