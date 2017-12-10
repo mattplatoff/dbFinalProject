@@ -26,7 +26,7 @@ function checkIfStaff(acctType){
 
 router.get('/', checkLogedIn, function(req, res, next) {
 	if(req.session.user.account_type == 1){
-		res.render('stats', { title: 'Hulton Hotel Management' });
+		res.render('stats', { title: 'Hulton Hotels Statistics' });
 	}
 	else{
 		var err = new Error("Access denied!");
