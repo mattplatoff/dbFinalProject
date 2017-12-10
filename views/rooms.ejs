@@ -96,6 +96,7 @@
             </div>
       	    <div id='reservationPrice'>
             <h4>Final Price: $<span id="price"></span></h4>
+            <input name="price" type="hidden" id="hidden-price" value=0 />
             </div>
             <% if (user != null){ %>
               <input name="userEmail" type="hidden" id="userEmail" value="<%= user.email %>" />
@@ -129,6 +130,7 @@ $(function(){
             $('#credit').append('<option value=' + card['Cnumber'] + '>' + card['Type'] + ' - ' + card['Cnumber'] + '</option>');
          });
          $('#credit').append('</select><div class="clearfix"></div>');
+         $('#credit').append('<input type="hidden" name="CID" value="' + cclist[0]['CID'] + '" />');
     });
   <% } %>
 });
@@ -176,10 +178,17 @@ function updateCart(){
     return;
     }
     var r = room.split(',');
-    $('#cartRoom').append('<div class="form-group roomEntry" data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
+    /*$('#cartRoom').append('<div class="form-group roomEntry" data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
     '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
     '<br/><div class="col-md-5">Start Date<br/><input type="date" name="sdate|' + r[1] + '|' + r[0] + '" class="sdate col-md-4 form-control" /></div>' +
     '<div class="col-md-5">End Date<br/><input type="date" name="edate|' + r[1] + '|' + r[0] + '" class="edate form-control" /></div>' +
+    '</div><div class="clearfix"></div><hr/>');*/
+    $('#cartRoom').append('<div class="form-group roomEntry" data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
+    '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
+    '<br/><div class="col-md-5">Start Date<br/><input type="date" name="sdate" class="sdate col-md-4 form-control" /></div>' +
+    '<div class="col-md-5">End Date<br/><input type="date" name="edate" class="edate form-control" /></div>' +
+    '<input type="hidden" name="roomid" value="' + r[1] + '" />' +
+    '<input type="hidden" name="hotelid" value="' + r[0] + '" />' +
     '</div><div class="clearfix"></div><hr/>');
   });
 
@@ -233,6 +242,7 @@ function updatePrice(){
   });
   $('#price').val(price);
   $('#price').text(price);
+  $('#hidden-price').val(price);
 }
 
 $('body').on("click",".sQuant, .bQuant, .sdate, .edate", function(){
