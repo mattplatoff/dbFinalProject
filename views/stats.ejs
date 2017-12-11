@@ -2,7 +2,70 @@
 <html>
 <head>
 </head>
-<body>
-wergdsgserg
+<body style="background-color: #e2e0f9">
+	<h1 align="center"><%=title%></h1>
+	<div style="margin-bottom:100px ; clear:both">
+		<h3>Highest Rated Room Type</h3>
+		<form id="hrrt">
+			<div style="float:left; width:200px">Date Range Start:<br>
+				<input type="date" name="dateStart">
+			</div>
+			<div style="float:left; width:200px">Date Range End:<br>
+				<input type="date" name="dateEnd">
+			</div>
+			<div style="float:left; width:100px"><br>
+				<button type="submit" form="hrrt">Calculate</button>
+			</div>
+		</form>
+	</div>
+	<hr>
+	<div style="margin-bottom:100px ; clear:both">
+		<h3>5 Best Customers</h3>
+		<form id="fbc">
+			<div style="float:left; width:200px">Date Range Start:<br>
+				<input type="date" name="dateStart">
+			</div>
+			<div style="float:left; width:200px">Date Range End:<br>
+				<input type="date" name="dateEnd">
+			</div>
+			<div style="float:left; width:100px"><br>
+				<button type="submit" form="fbc">Calculate</button>
+			</div>
+		</form>
+	</div>
+	<hr>
+	<div style="margin-bottom:100px ; clear:both">
+		<h3>Highest Rated Breakfast Type</h3>
+		<form id="hrbt">
+			<div style="float:left; width:200px">Date Range Start:<br>
+				<input type="date" name="dateStart">
+			</div>
+			<div style="float:left; width:200px">Date Range End:<br>
+				<input type="date" name="dateEnd">
+			</div>
+			<div style="float:left; width:100px"><br>
+				<button type="submit" form="hrbt">Calculate</button>
+			</div>
+		</form>
+	</div>
+	<hr>
+	<div style="margin-bottom:100px ; clear:both">
+		<h3>Highest Rated Service Type</h3>
+		<form id="hrst">
+			<div style="float:left; width:200px">Date Range Start:<br>
+				<input type="date" name="dateStart">
+			</div>
+			<div style="float:left; width:200px">Date Range End:<br>
+				<input type="date" name="dateEnd">
+			</div>
+			<div style="float:left; width:100px"><br>
+				<button type="submit" form="hrst">Calculate</button>
+			</div>
+		</form>
+	</div>
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="/javascripts/stats.js"></script>
+
 </body>
 </html>

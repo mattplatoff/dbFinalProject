@@ -20,18 +20,30 @@ function checkLogedIn(req, res,next){
     }
 }
 
-function checkIfStaff(acctType){
-	console.log(acctType);
-}
-
 router.get('/', checkLogedIn, function(req, res, next) {
 	if(req.session.user.account_type == 1){
-		res.render('stats', { title: 'Hulton Hotel Management' });
+		res.render('stats', { title: 'Hulton Hotels Statistics' });
 	}
 	else{
 		var err = new Error("Access denied!");
 		next(err);
 	}
+});
+
+router.post('/hrrt', function(req, res, next) {
+	console.log("test");
+});
+
+router.post('/fbc', function(req, res, next) {
+	console.log("test");
+});
+
+router.post('/hrbt', function(req, res, next) {
+	console.log("test");
+});
+
+router.post('/hrst', function(req, res, next) {
+	console.log("test");
 });
 
 module.exports = router;
