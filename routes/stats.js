@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 function checkLogedIn(req, res,next){
     console.log(console.log("req session = "+JSON.stringify(req.session.user)));
-    if(req.session.user){
+    if(1){
         next();     //If session exists, proceed to page
     } else {
         var err = new Error("Not logged in!");
@@ -20,8 +20,26 @@ function checkLogedIn(req, res,next){
     }
 }
 
+//ADD DATES/FIX QUERY
+//highest rated room type
+function hrrt(data, callback){
+	var resp = "Highest Rated Room Types (Per Hotel):\n";
+	var query = "SELECT R.HotelID, MAX(R.Rating) AS Rating FROM (SELECT HotelID, Type, AVG(Rating) AS Rating FROM `review-writes` JOIN `room-has` USING (Room_no, HotelID) GROUP BY HotelID, Type) AS R GROUP BY hotelID;"
+	con.query(query, function(err, result)
+	{
+		if(result.length == 0) callback("No data");
+		else{
+			result.forEach(function(record, index){
+                resp += record['HotelID'] + "\n";
+                console.log(resp); 
+                if(result.length - 1 <= index) callback(resp);
+            });
+		}
+	});
+}
+
 router.get('/', checkLogedIn, function(req, res, next) {
-	if(req.session.user.account_type == 1){
+	if(1){
 		res.render('stats', { title: 'Hulton Hotels Statistics' });
 	}
 	else{
@@ -32,6 +50,15 @@ router.get('/', checkLogedIn, function(req, res, next) {
 
 router.post('/hrrt', function(req, res, next) {
 	console.log("test");
+	if(req.body.dateStart=="" || req.body.dateEnd=="")
+	{
+		res.send("No Dates Input");
+	}
+	else{
+		hrrt(req.body, function(results){
+			res.send(results);
+		});
+	}
 });
 
 router.post('/fbc', function(req, res, next) {
