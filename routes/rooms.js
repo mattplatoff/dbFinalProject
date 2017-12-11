@@ -71,11 +71,32 @@ router.post('/rooms/cclist/:email', function(req, res, next){
   });
 });
 
+router.post('/rooms/findReservations/', function(req, res, next){
+  var sql = "SELECT inDate, outDate FROM Reserves WHERE HotelID = " + req.body.hotelid + " AND Room_no = " + req.body.roomno + ";"
+  /*console.log(sql);
+  for (var i = 0; i < sql.length; i++) {
+    console.log(sql.charAt(i) + " " + sql.charCodeAt(i));
+  }
+  sql = sql.replace(/&nbsp;/g,' ');
+  console.log(sql);*/
+  con.connect(function(err){
+    con.query(sql, function(err, reservations){
+        res.send(JSON.stringify(reservations));
+    });
+  });
+});
+
 router.get('/:id', function(req, res, next) {
     var roomList = [];
     sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
+            roomList.forEach(function(rm){
+              var today = new Date();
+              if(rm['SDate'] && rm['EDate'] && rm['SDate'] < today && today < rm['EDate']){
+                rm['Price'] = rm['Discount'];
+              }
+            });
             res.render('rooms', { title: 'Hulton Hotel Management',
                                   userString: JSON.stringify(req.session.user),
                                   roomListing: JSON.stringify(roomList)
@@ -104,7 +125,6 @@ function insertRooms(rooms, hotels, sdates, edates, invoiceID, callback){
     }
   });
   sql += ";";
-  console.log("insert rooms: " + sql);
   con.query(sql, function (err, results) {
       callback();
   });
@@ -124,7 +144,6 @@ function insertBreakfasts(invoiceID, hotel, inData, callback){
       }
     }
   });
-  console.log("breakfasts: " + sql);
   con.query(sql, function (err, results) {
       callback();
   });
@@ -135,7 +154,6 @@ function insertServices(invoiceID, hotel, inData, callback){
   var inserted = false;
   Object.keys(inData).forEach(function (key, index) {
     if(key == "Laundry" || key =="Massage" || key == "Spa"){
-      console.log("key: " + inData[key]);
       if(inData[key] != ""){
         if(inserted){
           sql += ",";
@@ -145,14 +163,12 @@ function insertServices(invoiceID, hotel, inData, callback){
       }
     }
   });
-  console.log("services: " + sql);
   con.query(sql, function (err, results) {
       callback();
   });
 }
 
 router.post('/rooms/reserve', function(req, res, next) {
-    console.log(req.body);
     var inData = req.body;
     var today = new Date();
     var TotalAmt = inData['price'];
@@ -170,12 +186,12 @@ router.post('/rooms/reserve', function(req, res, next) {
           insertRooms(rooms,hotels, sdates, edates, invoiceID, function(){
             insertBreakfasts(invoiceID, hotels[0], inData, function(){
               insertServices(invoiceID, hotels[0], inData, function(){
-                res.send("hi");
+                res.redirect('/');
               });
             });
           });
+        });
     });
-  });
 });
 
 module.exports = router;

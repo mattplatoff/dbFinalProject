@@ -30,16 +30,6 @@
           <li class="active"><a href="/myaccount">My Account<span class="sr-only">(current)</span></a></li>
           <li><a href="/hotels">Hotels</a></li>
         </ul>
-        <form id="signin" class="navbar-form navbar-right">
-          <div class="form-group">
-            <input name="email" id="loginemail" type="text" placeholder="Email" class="form-control">
-          </div>
-          <div class="form-group">
-            <input name="password" id="loginpassword" type="password" placeholder="Password" class="form-control">
-          </div>
-          <button type="submit" class="btn btn-success">Sign in</button>
-        <a role="button" class="btn btn-info" data-target="#registrationModal" data-toggle="modal">Register</a>
-        </form>
       </div>
     </div>
   </nav>
@@ -55,7 +45,7 @@
                   Hotel (Id <%= hotel['HotelID']%>)
                   <button style="float:right;" type="button" onclick="location.href='rooms/<%=hotel['HotelID']%>'" data-hotel-id="<%=hotel['HotelID']%>" class="btn btn-default">View rooms!</button>
                 </li>
-                <li class="list-group-item "><%= hotel['City'] %>, <div class="hotel-location"><%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %><div></li>
+                <li class="list-group-item hotel-location"><%= hotel['City'] %>, <div><%= hotel['State'] %> - <%= hotel['Street'] %> <%= hotel['ZIP'] %> <%= hotel['Country'] %><div></li>
                 <li class="list-group-item">Phone: <%= hotel['Phone_no']%></li>
                 <li class="list-group-item"><b>Amenities</b>
                     <ul class="list-group">
@@ -99,20 +89,18 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
+
 $(document).on("keyup", "#search", function(e) {
     $(".hotel-container").each(function(){
       console.log($(this).find('.hotel-location').text());
       console.log($('#search').val());
 
       if($(this).find('.hotel-location').text().toLowerCase().indexOf($('#search').val().toLowerCase()) !== -1){
-        console.log("show")
         $(this).show();
       }
       else{
-        console.log("dont show")
         $(this).hide();
       }
-      console.log("???");
     });
 });
 </script>
