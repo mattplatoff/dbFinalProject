@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 function checkLogedIn(req, res,next){
     console.log(console.log("req session = "+JSON.stringify(req.session.user)));
-    if(req.session.user){
+    if(1){
         next();     //If session exists, proceed to page
     } else {
         var err = new Error("Not logged in!");
@@ -20,18 +20,18 @@ function checkLogedIn(req, res,next){
     }
 }
 
-function checkIfStaff(acctType){
-	console.log(acctType);
-}
-
 router.get('/', checkLogedIn, function(req, res, next) {
-	if(req.session.user.account_type == 1){
+	if(1){
 		res.render('stats', { title: 'Hulton Hotels Statistics' });
 	}
 	else{
 		var err = new Error("Access denied!");
 		next(err);
 	}
+});
+
+router.post('/hrrt', function(req, res, next) {
+	console.log("test");
 });
 
 module.exports = router;

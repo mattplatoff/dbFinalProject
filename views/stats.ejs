@@ -3,6 +3,24 @@
 <head>
 </head>
 <body>
-<h1><%=title%></h1>
+	<h1 align="center"><%=title%></h1>
+	<div>
+		<h3>Highest Rated Room Type</h3>
+		<form id="hrrt">
+			<div style="float:left; width:200px">Date Range Start:<br>
+				<input type="date" name="dateStart">
+			</div>
+			<div style="float:left; width:200px">Date Range End:<br>
+				<input type="date" name="dateEnd">
+			</div>
+			<div style="float:left; width:100px"><br>
+				<button type="submit" form="hrrt">Calculate</button>
+			</div>
+		</form>
+	</div>
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="/javascripts/stats.js"></script>
+
 </body>
 </html>
