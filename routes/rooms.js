@@ -62,7 +62,7 @@ router.post('/rooms/cclist/:email', function(req, res, next){
   var getCIDSQL = "SELECT CID FROM Customer WHERE Email = '" + req.params.email + "'";
   con.connect(function(err){
     getCID(getCIDSQL, function(CID){
-      var getCCSQL = "SELECT Cnumber, Type FROM CreditCard WHERE CID = " + CID['CID'];
+      var getCCSQL = "SELECT Cnumber, Type, CID FROM CreditCard WHERE CID = " + CID['CID'];
       con.query(getCCSQL, function (err, CCs) {
           if(err) throw err;
           res.send(JSON.stringify(CCs));
@@ -84,9 +84,98 @@ router.get('/:id', function(req, res, next) {
     });
 });
 
+function insertInvoice(sql, callback){
+  con.query(sql, function (err, results) {
+      callback(results.insertId);
+  });
+}
+
+function insertRooms(rooms, hotels, sdates, edates, invoiceID, callback){
+  var sql = "INSERT INTO Reserves VALUES ";
+  Object.keys(rooms).forEach(function(index){
+    if(index > 0){
+      sql += ',';
+    }
+    if(Array.isArray(edates)){
+      sql += " (" + invoiceID + ", " + hotels[index] + ", " + rooms[index] + ", '" + edates[index] + "', '" + sdates[index] + "' )";
+    }
+    else{
+      sql += " (" + invoiceID + ", " + hotels + ", " + rooms + ", '" + edates + "', '" + sdates + "' )";
+    }
+  });
+  sql += ";";
+  console.log("insert rooms: " + sql);
+  con.query(sql, function (err, results) {
+      callback();
+  });
+}
+
+function insertBreakfasts(invoiceID, hotel, inData, callback){
+  var sql = "INSERT INTO Includes VALUES ";
+  var inserted = false;
+  Object.keys(inData).forEach(function (key, index) {
+    if(key == "Continental" || key =="French"){
+      if(inData[key] != "" && inData[key]){
+        if(inserted){
+          sql += ",";
+        }
+        inserted = true;
+        sql += " ( " + invoiceID + " , " + hotel + " , '" + key + "' , " + inData[key] + ")";
+      }
+    }
+  });
+  console.log("breakfasts: " + sql);
+  con.query(sql, function (err, results) {
+      callback();
+  });
+}
+
+function insertServices(invoiceID, hotel, inData, callback){
+  var sql = "INSERT INTO Contains VALUES ";
+  var inserted = false;
+  Object.keys(inData).forEach(function (key, index) {
+    if(key == "Laundry" || key =="Massage" || key == "Spa"){
+      console.log("key: " + inData[key]);
+      if(inData[key] != ""){
+        if(inserted){
+          sql += ",";
+        }
+        inserted = true;
+        sql += " ( " + invoiceID + " , " + hotel + " , '" + key + "' , " + inData[key] + ")";
+      }
+    }
+  });
+  console.log("services: " + sql);
+  con.query(sql, function (err, results) {
+      callback();
+  });
+}
+
 router.post('/rooms/reserve', function(req, res, next) {
     console.log(req.body);
-    res.send(req.body);
+    var inData = req.body;
+    var today = new Date();
+    var TotalAmt = inData['price'];
+    var Cnumber = inData['credit'];
+    var CID = inData['CID'];
+    var rooms = inData['roomid'];
+    var hotels = inData['hotelid'];
+    var sdates = inData['sdate'];
+    var edates = inData['edate'];
+    var ResDate = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate();
+    var sql = "INSERT INTO `Reservation-Makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
+              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )"
+    con.connect(function(err) {
+      insertInvoice(sql, function(invoiceID){
+          insertRooms(rooms,hotels, sdates, edates, invoiceID, function(){
+            insertBreakfasts(invoiceID, hotels[0], inData, function(){
+              insertServices(invoiceID, hotels[0], inData, function(){
+                res.send("hi");
+              });
+            });
+          });
+    });
+  });
 });
 
 module.exports = router;
