@@ -74,7 +74,7 @@ function registerUser(data, callback){
                     if (err) throw err;
                     console.log("1 Record inserted");
                 });
-                callback();
+                callback(valid);
             }
             else{
                 callback(valid);
@@ -95,7 +95,16 @@ function checkLogedIn(req, res,next){
 
 router.post('/', function(req, res, next) {
     registerUser(req.body, function(valid){
-        res.render('index', {title: "Hulton Hotel Management",valid:valid});
+        console.log("valid= "+valid);
+        if (valid===1){
+        res.send("registration successful");}
+        else if (valid === 2){
+            res.send("a field was left empty");}
+        else if (valid=== 3){
+            res.send("email already exists in db");}
+        else{
+            res.send("error: valid code not recognized");}
+
     });
     console.log("registered user = " +JSON.stringify(req.body));
 });
