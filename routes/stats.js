@@ -34,4 +34,16 @@ router.post('/hrrt', function(req, res, next) {
 	console.log("test");
 });
 
+router.post('/fbc', function(req, res, next) {
+	console.log("test");
+});
+
+router.post('/hrbt', function(req, res, next) {
+	console.log("test");
+});
+
+router.post('/hrst', function(req, res, next) {
+	console.log("test");
+});
+
 module.exports = router;
