@@ -17,10 +17,10 @@
         <div class="col-md-4">
             <ul class="list-group">
                 <li class="list-group-item">My Account Details:</li>
-                <li class="list-group-item"><span class="badge">New</span>Name: <%=user.name%></li>
-                <li class="list-group-item"><span class="badge">New</span>Email: <%=user.email%></li>
-                <li class="list-group-item"><span class="badge">New</span>Address: <%=user.address%></li>
-                <li class="list-group-item"><span class="badge">New</span>Phone Number: <%=user.phone%></li>
+                <li class="list-group-item">Name: <%=user.name%></li>
+                <li class="list-group-item">Email: <%=user.email%></li>
+                <li class="list-group-item">Address: <%=user.address%></li>
+                <li class="list-group-item">Phone Number: <%=user.phone%></li>
             </ul>
         </div>
 
@@ -28,37 +28,39 @@
             <div class="list-group"><a href="#" class="list-group-item active">
                     <h4 class="list-group-item-heading">Room Reservations:</h4>
                 </a>
-
-                <a href="#" class="list-group-item">
-                    <ul class="list-group">
-                        <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-                        <li class="list-group-item ">For up to [capacity] residents</li>
-                        <li class="list-group-item">
-                            <ul class="list-group">
-                                [Description]
-                            </ul>
-                        </li>
-                        <li class="list-group-item ">Price: [price]</li>
-                        <li class="list-group-item"> <h4>Reviews</h4>
-                            <ul>
-                                <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                                <li>Loved it! Great view and staff.</li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </a>
-
+                <% invoice.forEach(function(reservation, index) { %>
                 <a class="list-group-item">
                     <ul class="list-group">
-                        <li class="list-group-item active">Room [Room_no] | [Room Type] - Floor X</li>
-                        <li class="list-group-item ">For up to [capacity] residents</li>
-                        <li class="list-group-item">
+                        <li class="list-group-item active">Date of Reservation: <%reservation.res_date%></li>
+                        <li class="list-group-item "><h4>Rooms: </h4>
+                            <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
-                                [Description]
+                                <li class="list-group-item"><h4>Hotel: <%=room.hotelid%></h4></li>
+                                <li class="list-group-item">Room Number: <%=room.room_no%></li>
+                                <li class="list-group-item">Check In: <%=room.inDate%>  Check Out: <%=room.outDate%></li>
                             </ul>
+                            <%});%>
                         </li>
-                        <li class="list-group-item ">Price: [price]</li>
+                        <li class="list-group-item"> <h4>Services</h4>
+                        <%reservation.services.forEach(function(service){%>
+                        <ul class="list-group">
+                            <li class="list-group-item"><h4>Hotel: <%=service.hotelid%></h4></li>
+                            <li class="list-group-item">Service: <%=service.sType%></li>
+                        </ul>
+                        <%});%>
+                        </li>
+                        <li class="list-group-item"> <h4>Breakfasts</h4>
+                            <%reservation.breakfasts.forEach(function(breakfast){%>
+                            <ul class="list-group">
+                                <li class="list-group-item"><h4>Hotel: <%=breakfast.hotelid%></h4></li>
+                                <li class="list-group-item">Breakfast: <%=breakfast.bType%></li>
+                            </ul>
+                            <%});%>
+                        </li>
+                        <li class="list-group-item">
+                            Invoice num : <%=reservation.invoice_num%>
+                        </li>
+                        <li class="list-group-item ">Price: <%=reservation.amt%></li>
                         <li class="list-group-item"> <h4>Reviews</h4>
                             <ul>
                                 <li>Worst room I ever stayed at. Bed had bugs!!!</li>
@@ -68,7 +70,7 @@
 
                     </ul>
                 </a>
-
+                <% }); %>
             </div>
         </div>
     </div>
