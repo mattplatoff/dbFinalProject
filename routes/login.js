@@ -49,7 +49,18 @@ function logIn(req,res){
 router.post('/', function(req, res, next) {
     logIn(req, function(status){
         console.log("status = "+status);
-        res.send('ok');
+        if(status === 1){
+        res.send('Login Successful');}
+        else if(status === 2){
+            res.send("wrong pwd");
+        }
+        else if (status===3){
+            res.send("no email in db");
+
+        }
+        else {
+            res.send("no data provided");
+        }
     });
 
 });

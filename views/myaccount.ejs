@@ -28,7 +28,11 @@
             <div class="list-group"><a href="#" class="list-group-item active">
                     <h4 class="list-group-item-heading">Room Reservations:</h4>
                 </a>
-                <% invoice.forEach(function(reservation, index) { %>
+                <% if(invoice.length === 0){ %>
+                <h4>No Reservations</h4>
+                <% } %>
+
+                <% if (invoice.length >0 ) {invoice.forEach(function(reservation, index) { %>
                 <a class="list-group-item">
                     <ul class="list-group">
                         <li class="list-group-item active">Date of Reservation: <%reservation.res_date%></li>
@@ -70,7 +74,7 @@
 
                     </ul>
                 </a>
-                <% }); %>
+                <% });} %>
             </div>
         </div>
     </div>

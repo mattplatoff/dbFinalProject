@@ -14,6 +14,7 @@ function checkLogedIn(req, res,next){
     if(req.session.user){
         next();     //If session exists, proceed to page
     } else {
+        console.log("user log in error");
         var err = new Error("Not logged in!");
         console.log(req.session.user);
         next(err);  //Error, trying to access unauthorized page!
@@ -21,9 +22,10 @@ function checkLogedIn(req, res,next){
 }
 
 function getInvoiceData(cid,callback){
-    var query = "SELECT * FROM Reservation-Makes Where CID = "+ cid+";";
+    var query = "SELECT * FROM `Reservation-Makes` WHERE CID="+ cid+";";
     var invoices = [];
     con.query(query, function(err,result){
+        if (err) throw err;
         result.forEach(function (record) {
             console.log("invoice record = "+record);
              invoice = {
@@ -82,7 +84,7 @@ function getServicesFromInvoiceNum(invoice_num,callback){
 
 function getBreakfastFromInvoice(invoice_num,callback){
     var query = "SELECT * FROM Includes WHERE InvoiceNo = "+invoice_num+";";
-    console.log("entered getBreakfastFromInvoice()")
+    console.log("entered getBreakfastFromInvoice()");
     var breakfasts = [];
 
     con.query(query,function (err,result){
@@ -169,6 +171,7 @@ function getCidFromEmail(email,callback){
     con.query(query,function(err,result){
         if (err) throw err;
         result.forEach(function(record){
+            console.log("calling back cid: "+record['CID']);
             callback(record['CID']);
         })
     })
@@ -180,7 +183,8 @@ router.get('/', checkLogedIn, function(req, res, next) {
             getCustomerData(req.session.user.email,function(cusData){
                 getCidFromEmail(req.session.user.email, function(cid){
                 aggragrateInvoiceData(cid,function(invoices){
-                res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData,invoice:invoices});
+                console.log("invoices before render: "+JSON.stringify(invoices));
+                    res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData,invoice:invoices});
             });
         });
     });
@@ -188,6 +192,7 @@ router.get('/', checkLogedIn, function(req, res, next) {
 });
 
 router.use(function(err,req,res,next){
+    console.error(err.stack);
     res.send("Uhh on, please log in first");
 });
 
