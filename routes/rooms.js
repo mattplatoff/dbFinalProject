@@ -178,9 +178,10 @@ router.post('/rooms/reserve', function(req, res, next) {
     var hotels = inData['hotelid'];
     var sdates = inData['sdate'];
     var edates = inData['edate'];
-    var ResDate = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate();
+    //so getMonth is zero indexed but getDate is 1 indexed wtf
+    var ResDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     var sql = "INSERT INTO `Reservation-Makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
-              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )"
+              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )";
     con.connect(function(err) {
       insertInvoice(sql, function(invoiceID){
           insertRooms(rooms,hotels, sdates, edates, invoiceID, function(){
