@@ -1,5 +1,5 @@
 INSERT INTO `Review-Writes`(ReviewID, Rating, TextComment, dateReviewed, CID, sType, bType, Room_no, HotelID)
-	VALUES (9, 4.8,'Just alright lots of stuff not clean','2017-12-11', NULL, NULL, 01, 01),
+	VALUES (9, 4.8,'Just alright lots of stuff not clean','2017-12-11',1, NULL, NULL, 01, 01),
 		   (10, 2.8,' ','2017-12-11', 1, NULL, NULL, 01, 01),
 		   (11, 8.8,' ','2017-12-11', 1, NULL, NULL, 02, 01),
 		   (12, 9.8,' ','2017-12-11', 1, NULL, NULL, 03, 01),
