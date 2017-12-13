@@ -217,6 +217,35 @@ function checkCardValidty(data, callback){
     });
 }
 
+function update(field, newData, req, callback){
+    var query;
+    if(field != "Password") query = "UPDATE customer SET "+field+" = '"+newData+"' WHERE Email='"+req.session.user.email+"';";
+    else query = "UPDATE users SET "+field+" = '"+newData+"' WHERE Email='"+req.session.user.email+"';";
+    con.query(query, function(err, result){
+        if(err) throw err;
+        console.log("updated " + field);
+    });
+}
+
+router.post('/editInfo', function(req, res, next){
+    console.log(JSON.stringify(req.body));
+    if(req.body.name == "" && req.body.phone == "" && req.body.address == "" && req.body.password == "") res.send("All fields are empty");
+    if(req.body.name != ""){
+        update("Name", req.body.name, req);
+    }
+    if(req.body.phone != ""){
+         update("Phone_no", req.body.phone, req);       
+    }
+    if(req.body.address != ""){
+        update("address", req.body.address, req);
+    }
+    if(req.body.password != ""){
+        update("Password", req.body.password, req);
+    }
+
+    res.send("Account Information Updated");
+})
+
 router.post('/cc', function(req, res, next){
 console.log(JSON.stringify(req.body));  
     checkCardValidty(req.body, function(valid){

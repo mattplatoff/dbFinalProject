@@ -1,8 +1,14 @@
 const creditCardForm = document.querySelector('#creditCardForm');
+const editInfoForm = document.querySelector('#editInfoForm');
 
 creditCardForm.addEventListener('submit', (e) => {
     e.preventDefault()
     post('/myaccount/cc', '#creditCardForm');
+})
+
+editInfoForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+    post('/myaccount/editInfo', '#editInfoForm');
 })
 
 function post (path, formid) {
@@ -13,6 +19,7 @@ function post (path, formid) {
         data: $(formid).serialize(),
         success: function(msg) {
             alert(msg);
+            window.location.href = window.location.href
         }
     });
 }
