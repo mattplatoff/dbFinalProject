@@ -35,5 +35,4 @@ function post (path, formid) {
             window.location.href = window.location.href;            
         }
     });
-
 }

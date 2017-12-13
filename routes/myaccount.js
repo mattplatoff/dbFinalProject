@@ -305,4 +305,20 @@ router.use(function(err,req,res,next){
     res.send("Uhh on, please log in first");
 });
 
+router.post("/review",function(req,res){
+    console.log(JSON.stringify(req.body));
+    var data = req.body;
+    var stype = data["sType"]==="" ? "NULL" : data["sType"];
+    var btype = data["bType"]==="" ? "NULL" : data["bType"];
+    var room_no = data["Room_no"]==="" ? "NULL" : data["Room_no"];
+   var sql = "INSERT INTO `Review-Writes` (Rating, TextComment, CID, sType, bType, Room_no, Hotelid) VALUES ( " +
+       data["Rating"]+",'"+data['TextComment']+"',"+ data["CID"]+",'" +stype+"','"+btype+"',"+room_no+","+data["Hotelid"]+");";
+   console.log("sql review query= "+sql);
+   con.query(sql,function(err, result){
+       if (err) throw err;
+        res.status(200);
+    })
+
+});
+
 module.exports = router;

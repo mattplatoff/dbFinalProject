@@ -66,7 +66,10 @@
                         <li class="list-group-item "><h4>Rooms: </h4>
                             <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
-                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success" data-target="#reviewModal" data-toggle="modal" data-room='<%room.room_no%>' data-hotel='<%room.hotelid%>'>Review</button></li>
+                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success"
+                                                                                                   data-target="#reviewModal" data-toggle="modal"
+                                                                                                   data-room='<%=room.room_no%>' data-hotel='<%=room.hotelid%>'
+                                                                                                   data-cid='<%=reservation.cid%>' data-btype='' data-stype=''>Review</button></li>
                                 <li class="list-group-item"><h4>Hotel: <%=room.hotelid%> </h4></li>
                                 <li class="list-group-item">Check In: <%=room.inDate%>  Check Out: <%=room.outDate%></li>
                             </ul>
@@ -75,14 +78,20 @@
                         <li class="list-group-item"> <h4>Services</h4>
                         <%reservation.services.forEach(function(service){%>
                         <ul class="list-group">
-                            <li class="list-group-item">Service: <%=service.sType%> <button id="serviceReview" type="submit" class="btn btn-success">Review</button></li>
+                            <li class="list-group-item">Service: <%=service.sType%> <button id="serviceReview" type="submit" class="btn btn-success"
+                                                                                            data-target="#reviewModal" data-toggle="modal"
+                                                                                            data-room='' data-hotel='<%=reservation.hotelid%>'
+                                                                                            data-cid='<%=reservation.cid%>' data-btype='' data-stype='<%=service.sType%>'>Review</button></li>
                         </ul>
                         <%});%>
                         </li>
                         <li class="list-group-item"> <h4>Breakfasts:</h4>
                             <%reservation.breakfasts.forEach(function(breakfast){%>
                             <ul class="list-group">
-                                <li class="list-group-item">Breakfast: <%=breakfast.bType%> <button id="breakfastReview" type="submit" class="btn btn-success">Review</button></li>
+                                <li class="list-group-item">Breakfast: <%=breakfast.bType%> <button id="breakfastReview" type="submit" class="btn btn-success"
+                                                                                                    data-target="#reviewModal" data-toggle="modal"
+                                                                                                    data-room='' data-hotel='<%=reservation.hotelid%>'
+                                                                                                    data-cid='<%=reservation.cid%>' data-btype='<%=breakfast.bType%>' data-stype=''>Review</button></li>
                             </ul>
                             <%});%>
                         </li>
@@ -195,7 +204,13 @@
             <form id="reviewForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <input name="review" type="text" id="review" placeholder="Review" class="form-control">
+                        <input name="TextComment" type="text" id="textComment" placeholder="Review" class="form-control">
+                        <input name="Rating" type="number" id="rating" placeholder="1-10" class="form-control">
+                        <input name="bType" id="bType" type="hidden" class="form-control">
+                        <input name="sType" id="sType"type="hidden" class="form-control">
+                        <input name="Room_no" id="room_no" type="hidden" class="form-control">
+                        <input name="CID" id="cid" type="hidden" class="form-control">
+                        <input name="Hotelid" id="hotelid" type="hidden" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -240,8 +255,30 @@
         </div>
 </div>
 
+
+
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/myaccount.js"></script>
+<script>
+    $('#reviewModal').on('show.bs.modal', function(e) {
+        //get data-id attribute of the clicked element
+        console.log(e.relatedTarget);
+        console.log(e.currentTarget);
+        var room_no = $(e.relatedTarget).attr('data-room');
+        var hotelid = $(e.relatedTarget).attr('data-hotel');
+        var cid = $(e.relatedTarget).attr('data-cid');
+        var stype= $(e.relatedTarget).attr('data-stype');
+        var btype= $(e.relatedTarget).attr('data-btype');
+
+        //populate the textbox
+        $('#bType').val(btype);
+        $('#sType').val(stype);
+        $('#room_no').val(room_no);
+        $('#cid').val(cid);
+        $('#hotelid').val(hotelid);
+
+    });
+</script>
 </body>
 </html>
