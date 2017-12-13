@@ -96,7 +96,7 @@ function getBreakfastFromInvoice(invoice_num,callback){
             var breakfast = {
                 invoice_num:record['InvoiceNo'],
                 hotelid:record['HotelID'],
-                bType:record['sType']
+                bType:record['bType']
             };
             breakfasts.push(breakfast);
         });
