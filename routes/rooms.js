@@ -118,6 +118,7 @@ function insertInvoice(sql, callback){
 
 function insertRooms(rooms, hotels, sdates, edates, invoiceID, callback){
   var sql = "INSERT INTO Reserves VALUES ";
+  console.log(JSON.stringify(rooms));
   Object.keys(rooms).forEach(function(index){
     if(index > 0){
       sql += ',';
