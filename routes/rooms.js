@@ -19,6 +19,7 @@ function loadReviews(reviewSQL, callback){
 function getRoomReviews(result, req, callback){
     roomList = [];
     con.query(sql, function (err, result) {
+       if (err) throw err;
         result.forEach(function(roomRecord, index){
             reviewSQL = "SELECT * FROM `Review-Writes` WHERE HotelId = " + req.params.id + " AND Room_no = " + roomRecord['Room_no'];
             loadReviews(reviewSQL, function(reviewList){
@@ -72,7 +73,7 @@ router.post('/rooms/cclist/:email', function(req, res, next){
 });
 
 router.post('/rooms/findReservations/', function(req, res, next){
-  var sql = "SELECT inDate, outDate FROM Reserves WHERE HotelID = " + req.body.hotelid + " AND Room_no = " + req.body.roomno + ";"
+  var sql = "SELECT inDate, outDate FROM Reserves WHERE HotelID = " + req.body.hotelid + " AND Room_no = " + req.body.roomno + ";";
   /*console.log(sql);
   for (var i = 0; i < sql.length; i++) {
     console.log(sql.charAt(i) + " " + sql.charCodeAt(i));
@@ -80,7 +81,9 @@ router.post('/rooms/findReservations/', function(req, res, next){
   sql = sql.replace(/&nbsp;/g,' ');
   console.log(sql);*/
   con.connect(function(err){
-    con.query(sql, function(err, reservations){
+
+      con.query(sql, function(err, reservations){
+        if (err) throw err;
         res.send(JSON.stringify(reservations));
     });
   });
@@ -107,6 +110,8 @@ router.get('/:id', function(req, res, next) {
 
 function insertInvoice(sql, callback){
   con.query(sql, function (err, results) {
+      if (err) throw err;
+      console.log("insert invoice results: "+JSON.stringify(results));
       callback(results.insertId);
   });
 }
@@ -181,7 +186,7 @@ router.post('/rooms/reserve', function(req, res, next) {
     //so getMonth is zero indexed but getDate is 1 indexed wtf
     var ResDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     var sql = "INSERT INTO `Reservation-Makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
-              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )";
+              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + 12121212 + " )";
     con.connect(function(err) {
       insertInvoice(sql, function(invoiceID){
           insertRooms(rooms,hotels, sdates, edates, invoiceID, function(){
