@@ -139,7 +139,7 @@ function insertBreakfasts(invoiceID, hotel, inData, callback){
   var sql = "INSERT INTO Includes VALUES ";
   var inserted = false;
   Object.keys(inData).forEach(function (key, index) {
-    if(key == "Continental" || key =="French"){
+    if(key == "Continental" || key =="French"|| key =="American"|| key =="Italian"|| key =="English"){
       if(inData[key] != "" && inData[key]){
         if(inserted){
           sql += ",";
@@ -158,7 +158,7 @@ function insertServices(invoiceID, hotel, inData, callback){
   var sql = "INSERT INTO Contains VALUES ";
   var inserted = false;
   Object.keys(inData).forEach(function (key, index) {
-    if(key == "Laundry" || key =="Massage" || key == "Spa"){
+    if(key == "Laundry" || key == "Massage" || key == "Spa" || key == "Airport drop-off"|| key == "Airport pick-up" || key == "Parking"|| key == "Valet"){
       if(inData[key] != ""){
         if(inserted){
           sql += ",";
