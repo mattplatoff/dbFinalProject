@@ -60,7 +60,7 @@ function getCID(getCIDSQL, callback){
 }
 
 router.post('/rooms/cclist/:email', function(req, res, next){
-  var getCIDSQL = "SELECT CID FROM Customer WHERE Email = '" + req.params.email + "'";
+    var getCIDSQL = "SELECT CID FROM Customer WHERE Email = '" + req.params.email + "'";
   con.connect(function(err){
     getCID(getCIDSQL, function(CID){
       var getCCSQL = "SELECT Cnumber, Type, CID FROM CreditCard WHERE CID = " + CID['CID'];
@@ -187,7 +187,7 @@ router.post('/rooms/reserve', function(req, res, next) {
     //so getMonth is zero indexed but getDate is 1 indexed wtf
     var ResDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     var sql = "INSERT INTO `Reservation-Makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
-              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + 12121212 + " )";
+              "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )";
     con.connect(function(err) {
       insertInvoice(sql, function(invoiceID){
           insertRooms(rooms,hotels, sdates, edates, invoiceID, function(){
