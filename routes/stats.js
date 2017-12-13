@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 function checkLogedIn(req, res,next){
     console.log(console.log("req session = "+JSON.stringify(req.session.user)));
-    if(1){
+    if(req.session.user){
         next();     //If session exists, proceed to page
     } else {
         var err = new Error("Not logged in!");
@@ -19,8 +19,6 @@ function checkLogedIn(req, res,next){
         next(err);  //Error, trying to access unauthorized page!
     }
 }
-
-//ADD DATES/FIX QUERY
 
 //highest rated room type
 function hrrt(data, callback){
@@ -96,7 +94,7 @@ function hrst(data, callback){
 }
 
 router.get('/', checkLogedIn, function(req, res, next) {
-	if(1){
+	if(req.session.user.account_type == 1){
 		res.render('stats', { title: 'Hulton Hotels Statistics' });
 	}
 	else{

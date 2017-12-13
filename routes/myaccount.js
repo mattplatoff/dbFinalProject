@@ -184,6 +184,70 @@ function getCidFromEmail(email,callback){
 
 }
 
+function checkCard(data, callback){
+    var cardexists = 0;
+    var query = "SELECT Cnumber FROM creditcard";
+    con.query(query, function(err, result){
+        if (err) throw err;
+        if(result.length == 0) callback(cardexists);
+        else{
+            result.forEach(function(record, index){
+                if(record['Cnumber']==data.number) cardexists = 1;
+                if(result.length - 1 <= index) callback(cardexists); 
+            });
+        }
+    });
+}
+
+function checkCardValidty(data, callback){
+    //1 - valid
+    //2 - empty field
+    //3 - card exists
+    //4 - exp date is in past
+    valid = 1;
+    var now = new Date();
+    //now.setHours(0,0,0,0);
+    console.log(now);
+    console.log(data.expirationDate);
+    if(Date.parse(data.expirationDate) < now) valid = 4;
+    if(data.name==""||data.email==""||data.phone==""||data.email==""||data.password==""||data.confpassword==""||data.cardType=="") valid=2;
+    checkCard(data, function(exists){
+        if(exists) valid = 3;
+        callback(valid);
+    });
+}
+
+router.post('/cc', function(req, res, next){
+console.log(JSON.stringify(req.body));  
+    checkCardValidty(req.body, function(valid){
+        console.log(valid);
+        if(valid == 1){
+            var query = "SELECT CID FROM Customer WHERE Email='" + req.session.user.email + "';";
+            var cid;
+            con.query(query, function(err, result){
+                if(err) throw err;
+                console.log("got cid");
+                cid = result[0].CID;
+                var insQuery = "INSERT INTO CreditCard(Cnumber, BillingAddr, Name, SecCode, Type, ExpDate, CID) VALUES ("+req.body.number+",'"+req.body.address+"','"+req.body.name+"',"+req.body.code+",'"+req.body.cardType+"','"+req.body.expirationDate+"',"+cid+");";
+                con.query(insQuery, function(err, result){
+                    if(err) throw err;
+                    console.log("inserted cc");
+                    res.send("Card Added");
+                });
+            });
+        }
+        else if(valid == 2){
+            res.send("Some fields empty");
+        }
+        else if(valid == 3){
+            res.send("Credit Card already added");
+        }
+        else if(valid == 4){
+            res.send("Credit Card is expired");
+        }
+    });
+});
+
 router.get('/', checkLogedIn, function(req, res, next) {
     var reservationlist = [];
                 getCidFromEmail(req.session.user.email, function(cid){

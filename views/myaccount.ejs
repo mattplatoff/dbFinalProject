@@ -24,6 +24,9 @@
                 <li class="list-group-item">Address: <%=user.address%></li>
                 <li class="list-group-item">Phone Number: <%=user.phone%></li>
             </ul>
+            <br>
+            <p align="center"><a role="button" class="btn btn-info" data-target="#creditCardModal" data-toggle="modal">Add a Credit Card</a></p>
+            <br>
         </div>
 
         <div class="col-md-8">
@@ -117,7 +120,51 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+<div id="creditCardModal" tabindex="-1" class="modal" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3 id="myModalLabel">Add a Credit Card</h3>
+        </div>
+            <form id="creditCardForm">
+            <div class="modal-body">
+          <h4>Fill out form to add a credit card to your account</h4>
+          <div class="form-group">
+          <input type="text" name="name" id="name" placeholder="Name On Card" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="number" id="number" placeholder="Card Number" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="code" id="code" placeholder="Security Code" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="address" id="address" placeholder="Billing Address" class="form-control">
+          </div>
+          <div class="form-group" style="margin-left: 2px">
+          <select name="cardType">
+            <option value="">Select Card Type</option>
+            <option value="Visa">Visa</option>
+            <option value="American Express">American Express</option>
+            <option value="MasterCard">Master Card</option>
+            <option value="Discover">Discover</option>
+          </select>
+          </div>
+          <div class="form-group" style="margin-left: 2px">
+            Expiration Date: <br>
+          <input type="date" name="expirationDate">
+          </div>
+          </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" onclick="document.querySelector('#creditCardForm').reset()" aria-hidden="true">Close</button>
+          <button type="sumbit" class="btn btn-primary" form="creditCardForm">Submit</button>
+        </div>
+            </form>
+          </div>
 
+        </div>
+      </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/myaccount.js"></script>
