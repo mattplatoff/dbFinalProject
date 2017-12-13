@@ -17,13 +17,16 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
+            <div class="list-group"><a href="#" class="list-group-item active">
+            <h4 class="list-group-item-heading">My Account Details:</h4>
+            </a>
             <ul class="list-group">
-                <li class="list-group-item">My Account Details:</li>
                 <li class="list-group-item">Name: <%=user.name%></li>
                 <li class="list-group-item">Email: <%=user.email%></li>
                 <li class="list-group-item">Address: <%=user.address%></li>
                 <li class="list-group-item">Phone Number: <%=user.phone%></li>
             </ul>
+        	</div>
             <br>
             <a role="button" class="btn btn-info" data-target="#editInfoModal" data-toggle="modal" style="float:left">Edit Info</a>
             <a role="button" class="btn btn-info" data-target="#creditCardModal" data-toggle="modal" style="float:right">Add a Credit Card</a>
