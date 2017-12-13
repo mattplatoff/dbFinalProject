@@ -108,8 +108,8 @@
             <% } %>
           </div>
           <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset()" aria-hidden="true">Close</button>
-            <button type="sumbit" id="subButton" class="btn btn-primary">Submit</button>
+            <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset();" aria-hidden="true">Close</button>
+            <button onclick="document.cookie = 'cartcookie=';" type="sumbit" id="subButton" class="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>
@@ -136,6 +136,7 @@ $('body').on("click hover blur change",".sdate, .edate", function(){
     warning.css('visibility', 'visible');
     return;
   }
+
   else{
     $('#subButton').prop('disabled', false);
     warning.css('visibility', 'hidden');
@@ -159,7 +160,15 @@ $('body').on("click hover blur change",".sdate, .edate", function(){
   }
 });
 
+$('#bCart').click(function(){
+  updateCart();
+})
+
 $(function(){
+  $('#bCart').prop('disabled', true);
+  if(document.cookie.length > 11){
+    $('#bCart').prop('disabled', false);
+  }
   updateCart();
   //if we are logged in
   if($('#userEmail').length == 0 ){
@@ -311,6 +320,10 @@ $('.bReserve').click(function(){
   }
   else{
     appendCartCookie(hotelID + ',' + roomID+ ',' + price);
+  }
+  $('#bCart').prop('disabled', true);
+  if(document.cookie.length > 11){
+    $('#bCart').prop('disabled', false);
   }
 });
 
