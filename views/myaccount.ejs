@@ -42,7 +42,7 @@
                 <% if (invoice.length >0 ) {invoice.forEach(function(reservation, index) { %>
                 <a class="list-group-item">
                     <ul class="list-group">
-                        <li class="list-group-item active">Date of Reservation: <%reservation.res_date%></li>
+                        <li class="list-group-item active">Date of Reservation: <%=reservation.res_date%></li>
                         <li class="list-group-item "><h4>Rooms: </h4>
                             <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
