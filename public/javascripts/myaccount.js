@@ -19,7 +19,7 @@ function post (path, formid) {
         data: $(formid).serialize(),
         success: function(msg) {
             alert(msg);
-            window.location.href = window.location.href
+            window.location.href = window.location.href;
         }
     });
 }
