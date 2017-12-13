@@ -109,7 +109,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn" data-dismiss="modal" onclick="document.querySelector('#reservationForm').reset()" aria-hidden="true">Close</button>
-            <button type="sumbit" class="btn btn-primary">Submit</button>
+            <button type="sumbit" id="subButton" class="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>
@@ -129,6 +129,17 @@ $('body').on("click hover blur change",".sdate, .edate", function(){
     secondDate = $(this).val();
     firstDate = room.find('.sdate').val();
   }
+  var warning = room.find('.warningDates');
+
+  if(secondDate < firstDate){
+    $('#subButton').prop('disabled', true);
+    warning.css('visibility', 'visible');
+    return;
+  }
+  else{
+    $('#subButton').prop('disabled', false);
+    warning.css('visibility', 'hidden');
+  }
   var reservedWarning = room.find('.warning');
   if(firstDate != "" && secondDate != ""){
     var h = room.attr('data-hotelid');
@@ -138,10 +149,10 @@ $('body').on("click hover blur change",".sdate, .edate", function(){
       reserves.forEach(function(reservation){
         //if overlap
         reservedWarning.css('visibility', 'hidden');
-        console.log(reservation['inDate'] <= secondDate);
-        console.log(reservation['outDate'] >= firstDate);
+        $('#subButton').prop('disabled', false);
         if(reservation['inDate'] <= secondDate && reservation['outDate'] >= firstDate ){
           reservedWarning.css('visibility', 'visible');
+          $('#subButton').prop('disabled', true);
         }
       });
     });
@@ -150,7 +161,6 @@ $('body').on("click hover blur change",".sdate, .edate", function(){
 
 $(function(){
   updateCart();
-
   //if we are logged in
   if($('#userEmail').length == 0 ){
       $('#bCart').attr('disabled', 'disabled');
@@ -221,7 +231,8 @@ function updateCart(){
     '</div><div class="clearfix"></div><hr/>');*/
     $('#cartRoom').append('<div class="form-group roomEntry" data-roomid='+r[1]+' data-hotelid='+r[0]+' data-price=' + r[2] + '><b>Room ' + r[1] + ' in Hotel ' + r[0] +
     '<button class="btn btn-link delRoom" style="float:right;font-size:20px" data-remove=' + room + ' type="button">×</button></b>' +
-    '<span class="warning" style="visibility:hidden;color:red;float:right">This room is already reserved for this period!</span>' +
+    '<br/><span class="warning" style="visibility:hidden;color:red;float:right">This room is already reserved for this period!</span>' +
+    '<span class="warningDates" style="visibility:hidden;color:red;float:left">Endate should occur after startdate!</span>' +
     '<br/><div class="col-md-5">Start Date<br/><input type="date" name="sdate" class="sdate col-md-4 form-control" /></div>' +
     '<div class="col-md-5">End Date<br/><input type="date" name="edate" class="edate form-control" /></div>' +
     '<input type="hidden" name="roomid" value="' + r[1] + '" />' +
