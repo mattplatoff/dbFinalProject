@@ -28,13 +28,10 @@ SELECT * R.HotelId
 	--For a given time period (begin date and end date) compute the 5 best
 	--customers (in terms of money spent in reservations).
 
-SELECT * 
-FROM Customer 
-WHERE CID IN 
-	(SELECT CID, SUM(TotalAmt) 
-	FROM `Reservation-Makes` 
-	GROUP BY CID ORDER BY TotalAmt).CID limit 5
-	`Reservation-Makes`.dateReviewed BETWEEN var_StartDate AND var_EndDate;
+SELECT C1.name
+FROM (SELECT CID, SUM(TotalAmt) 
+	 FROM `Reservation-Makes` R WHERE R.ResDate BETWEEN '2017-01-01' AND '2017-12-31' 
+	 GROUP BY CID ORDER BY TotalAmt) AS C, Customer C1 WHERE C.CID=C1.CID limit 5
 
 	--For a given time period (begin date and end date) compute the highest rated
 	--breakfast type across all hotels.

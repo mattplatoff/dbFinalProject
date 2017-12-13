@@ -18,7 +18,7 @@ function checkEmail(data, callback){
         else{
             result.forEach(function(record, index){
                 if(record['Email']==data.email) emailexists = 1;
-                if(emailexists || result.length - 1 <= index) callback(emailexists);
+                if(result.length - 1 <= index) callback(emailexists);
             });
         }
     });

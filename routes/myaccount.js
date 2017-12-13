@@ -27,8 +27,8 @@ function getInvoiceData(cid,callback){
     con.query(query, function(err,result){
         if (err) throw err;
         result.forEach(function (record) {
-            console.log("invoice record = "+record);
-             invoice = {
+            //console.log("invoice record = "+JSON.stringify(record));
+             var invoice = {
                 invoice_num:record['InvoiceNo'],
                  res_date:record['ResDate'],
                  amt:record['TotalAmt'],
@@ -36,9 +36,11 @@ function getInvoiceData(cid,callback){
                  Cnumber:record['Cnumber']
             };
              invoices.push(invoice);
+             console.log("invoices in getInvoiceData "+JSON.stringify(invoices));
         });
+        callback(invoices);
     });
-    callback(invoices);
+
 }
 
 function getRoomsFromInvoice(invoice_num,callback){
@@ -47,8 +49,8 @@ function getRoomsFromInvoice(invoice_num,callback){
     con.query(query, function(err,result){
         if (err) throw err;
         result.forEach(function (record) {
-            console.log("room record = "+record);
-            room = {
+           // console.log("room record = "+JSON.stringify(record));
+            var room = {
                 invoice_num:record['InvoiceNo'],
                 hotelid:record['HotelID'],
                 room_no:record['Room_no'],
@@ -70,8 +72,8 @@ function getServicesFromInvoiceNum(invoice_num,callback){
     con.query(query,function (err,result){
         if (err) throw err;
         result.forEach(function (record) {
-            console.log("service record = "+JSON.stringify(record));
-            service = {
+           // console.log("service record = "+JSON.stringify(record));
+            var service = {
                 invoice_num:record['InvoiceNo'],
                 hotelid:record['HotelID'],
                 sType:record['sType']
@@ -90,8 +92,8 @@ function getBreakfastFromInvoice(invoice_num,callback){
     con.query(query,function (err,result){
         if (err) throw err;
         result.forEach(function (record) {
-            console.log("breakfast record = "+JSON.stringify(record));
-            breakfast = {
+           // console.log("breakfast record = "+JSON.stringify(record));
+            var breakfast = {
                 invoice_num:record['InvoiceNo'],
                 hotelid:record['HotelID'],
                 bType:record['sType']
@@ -120,49 +122,53 @@ function getCustomerData(email,callback){
             cusData.address=record['Address'];
             cusData.phone=record['Phone_no'];
             console.log("cus data making obj: "+JSON.stringify(cusData));
-            callback(cusData);
         });
-
+        callback(cusData);
     });
 }
 
 function aggragrateInvoiceData(cid,callback){
-    var _invoices;
-    var reservations =[];
+    var _invoices = [];
     console.log("entered aggregateInvoiceData");
     getInvoiceData(cid,function (invoices) {
+        var reservations = [];
         _invoices=invoices;
         console.log("invoices initialized to: "+JSON.stringify(_invoices));
-    });
-    _invoices.forEach(function(invoice){
 
-        var _breakfasts,_rooms,_services;
+    _invoices.forEach(function(invoice){
         invoiceNum = invoice.invoice_num;
         getBreakfastFromInvoice(invoiceNum,function (breakfasts) {
             _breakfasts=breakfasts;
-            console.log("_breakfasts initialized to: "+JSON.stringify(_breakfasts));
-        });
+            //console.log("_breakfasts initialized to: "+JSON.stringify(_breakfasts));
+
         getServicesFromInvoiceNum(invoiceNum,function (services) {
             _services=services;
-            console.log("_services initialized to: "+ JSON.stringify(_services));
-        });
+            //console.log("_services initialized to: "+ JSON.stringify(_services));
+
         getRoomsFromInvoice(invoiceNum, function (rooms) {
             _rooms=rooms;
-            console.log("_rooms initialized to: "+JSON.stringify(_rooms));
-        });
-        reservation = {
+           // console.log("_rooms initialized to: "+JSON.stringify(_rooms));
+
+        var reservation = {
             invoice_num:invoice.invoice_num,
             res_date:invoice.res_date,
             amt:invoice.amt,
             cid:invoice.cid,
             Cnumber:invoice.Cnumber,
-            rooms:_rooms,
-            services:_services,
-            breakfasts:_breakfasts
+            rooms:rooms,
+            services:services,
+            breakfasts:breakfasts
         };
         reservations.push(reservation);
+        //console.log("reservations in loop "+JSON.stringify(reservations));
+        });
     });
-    callback(reservations);
+    });
+    });
+        console.log("reservations before callback"+JSON.stringify(reservations));
+        callback(reservations);
+    });
+
 }
 
 function getCidFromEmail(email,callback){
@@ -173,18 +179,82 @@ function getCidFromEmail(email,callback){
         result.forEach(function(record){
             console.log("calling back cid: "+record['CID']);
             callback(record['CID']);
-        })
-    })
+        });
+    });
 
 }
 
+function checkCard(data, callback){
+    var cardexists = 0;
+    var query = "SELECT Cnumber FROM creditcard";
+    con.query(query, function(err, result){
+        if (err) throw err;
+        if(result.length == 0) callback(cardexists);
+        else{
+            result.forEach(function(record, index){
+                if(record['Cnumber']==data.number) cardexists = 1;
+                if(result.length - 1 <= index) callback(cardexists); 
+            });
+        }
+    });
+}
+
+function checkCardValidty(data, callback){
+    //1 - valid
+    //2 - empty field
+    //3 - card exists
+    //4 - exp date is in past
+    valid = 1;
+    var now = new Date();
+    //now.setHours(0,0,0,0);
+    console.log(now);
+    console.log(data.expirationDate);
+    if(Date.parse(data.expirationDate) < now) valid = 4;
+    if(data.name==""||data.email==""||data.phone==""||data.email==""||data.password==""||data.confpassword==""||data.cardType=="") valid=2;
+    checkCard(data, function(exists){
+        if(exists) valid = 3;
+        callback(valid);
+    });
+}
+
+router.post('/cc', function(req, res, next){
+console.log(JSON.stringify(req.body));  
+    checkCardValidty(req.body, function(valid){
+        console.log(valid);
+        if(valid == 1){
+            var query = "SELECT CID FROM Customer WHERE Email='" + req.session.user.email + "';";
+            var cid;
+            con.query(query, function(err, result){
+                if(err) throw err;
+                console.log("got cid");
+                cid = result[0].CID;
+                var insQuery = "INSERT INTO CreditCard(Cnumber, BillingAddr, Name, SecCode, Type, ExpDate, CID) VALUES ("+req.body.number+",'"+req.body.address+"','"+req.body.name+"',"+req.body.code+",'"+req.body.cardType+"','"+req.body.expirationDate+"',"+cid+");";
+                con.query(insQuery, function(err, result){
+                    if(err) throw err;
+                    console.log("inserted cc");
+                    res.send("Card Added");
+                });
+            });
+        }
+        else if(valid == 2){
+            res.send("Some fields empty");
+        }
+        else if(valid == 3){
+            res.send("Credit Card already added");
+        }
+        else if(valid == 4){
+            res.send("Credit Card is expired");
+        }
+    });
+});
+
 router.get('/', checkLogedIn, function(req, res, next) {
     var reservationlist = [];
-            getCustomerData(req.session.user.email,function(cusData){
                 getCidFromEmail(req.session.user.email, function(cid){
-                aggragrateInvoiceData(cid,function(invoices){
+                    aggragrateInvoiceData(cid,function(invoices){
+                        getCustomerData(req.session.user.email,function(cusData){
                 console.log("invoices before render: "+JSON.stringify(invoices));
-                    res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData,invoice:invoices});
+                    res.render('myaccount', { title: 'Hulton Hotel Management', _user:JSON.stringify(cusData),_invoice:JSON.stringify(invoices)});
             });
         });
     });

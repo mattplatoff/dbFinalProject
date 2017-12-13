@@ -11,6 +11,8 @@
 
     <title><%=title%></title>
 </head>
+<%user=JSON.parse(_user);%>
+<%invoice=JSON.parse(_invoice);%>
 <body style="padding-top: 70px">
 <div class="container-fluid">
     <div class="row">
@@ -22,15 +24,20 @@
                 <li class="list-group-item">Address: <%=user.address%></li>
                 <li class="list-group-item">Phone Number: <%=user.phone%></li>
             </ul>
+            <br>
+            <p align="center"><a role="button" class="btn btn-info" data-target="#creditCardModal" data-toggle="modal">Add a Credit Card</a></p>
+            <br>
         </div>
 
         <div class="col-md-8">
             <div class="list-group"><a href="#" class="list-group-item active">
                     <h4 class="list-group-item-heading">Room Reservations:</h4>
                 </a>
-                <% if(invoice.length === 0){ %>
+
+
+                <% if(invoice.length == 0){ %>
                 <h4>No Reservations</h4>
-                <% } %>
+                <% }; %>
 
                 <% if (invoice.length >0 ) {invoice.forEach(function(reservation, index) { %>
                 <a class="list-group-item">
@@ -39,8 +46,8 @@
                         <li class="list-group-item "><h4>Rooms: </h4>
                             <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
-                                <li class="list-group-item"><h4>Hotel: <%=room.hotelid%></h4></li>
-                                <li class="list-group-item">Room Number: <%=room.room_no%></li>
+                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success" data-room='<%room.room_no%>' data-hotel='<%room.hotelid%>'>Review</button></li>
+                                <li class="list-group-item"><h4>Hotel: <%=room.hotelid%> </h4></li>
                                 <li class="list-group-item">Check In: <%=room.inDate%>  Check Out: <%=room.outDate%></li>
                             </ul>
                             <%});%>
@@ -48,28 +55,21 @@
                         <li class="list-group-item"> <h4>Services</h4>
                         <%reservation.services.forEach(function(service){%>
                         <ul class="list-group">
-                            <li class="list-group-item"><h4>Hotel: <%=service.hotelid%></h4></li>
-                            <li class="list-group-item">Service: <%=service.sType%></li>
+                            <li class="list-group-item">Service: <%=service.sType%> <button id="serviceReview" type="submit" class="btn btn-success">Review</button></li>
                         </ul>
                         <%});%>
                         </li>
-                        <li class="list-group-item"> <h4>Breakfasts</h4>
+                        <li class="list-group-item"> <h4>Breakfasts:</h4>
                             <%reservation.breakfasts.forEach(function(breakfast){%>
                             <ul class="list-group">
-                                <li class="list-group-item"><h4>Hotel: <%=breakfast.hotelid%></h4></li>
-                                <li class="list-group-item">Breakfast: <%=breakfast.bType%></li>
+                                <li class="list-group-item">Breakfast: <%=breakfast.bType%> <button id="breakfastReview" type="submit" class="btn btn-success">Review</button></li>
                             </ul>
                             <%});%>
                         </li>
+
+                        <li class="list-group-item ">Price: <%=reservation.amt%></li>
                         <li class="list-group-item">
                             Invoice num : <%=reservation.invoice_num%>
-                        </li>
-                        <li class="list-group-item ">Price: <%=reservation.amt%></li>
-                        <li class="list-group-item"> <h4>Reviews</h4>
-                            <ul>
-                                <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                                <li>Loved it! Great view and staff.</li>
-                            </ul>
                         </li>
 
                     </ul>
@@ -120,7 +120,97 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+<div id="creditCardModal" tabindex="-1" class="modal" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3 id="myModalLabel">Add a Credit Card</h3>
+        </div>
+            <form id="creditCardForm">
+            <div class="modal-body">
+          <h4>Fill out form to add a credit card to your account</h4>
+          <div class="form-group">
+          <input type="text" name="name" id="name" placeholder="Name On Card" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="number" id="number" placeholder="Card Number" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="code" id="code" placeholder="Security Code" class="form-control">
+          </div>
+          <div class="form-group">
+          <input type="text" name="address" id="address" placeholder="Billing Address" class="form-control">
+          </div>
+          <div class="form-group" style="margin-left: 2px">
+          <select name="cardType">
+            <option value="">Select Card Type</option>
+            <option value="Visa">Visa</option>
+            <option value="American Express">American Express</option>
+            <option value="MasterCard">Master Card</option>
+            <option value="Discover">Discover</option>
+          </select>
+          </div>
+          <div class="form-group" style="margin-left: 2px">
+            Expiration Date: <br>
+          <input type="date" name="expirationDate">
+          </div>
+          </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" onclick="document.querySelector('#creditCardForm').reset()" aria-hidden="true">Close</button>
+          <button type="sumbit" class="btn btn-primary" form="creditCardForm">Submit</button>
+        </div>
+            </form>
+          </div>
 
+<div id="reviewModal" tabindex="-1" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3 id="myModalLabel">Review: </h3>
+            </div>
+            <form id="registrationForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input name="review" type="text" id="review" placeholder="Review" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" onclick="document.querySelector('#registrationForm').reset()" aria-hidden="true">Close</button>
+                    <button type="sumbit" class="btn btn-primary" form="reviewForm">Submit</button>
+                </div>
+            </form>
+        </div>
+
+<div id="reviewModal" tabindex="-1" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3 id="myModalLabel">Review: </h3>
+            </div>
+            <form id="registrationForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input name="review" type="text" id="review" placeholder="Review" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" onclick="document.querySelector('#registrationForm').reset()" aria-hidden="true">Close</button>
+                    <button type="sumbit" class="btn btn-primary" form="reviewForm">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+        </div>
+      </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/javascripts/myaccount.js"></script>
