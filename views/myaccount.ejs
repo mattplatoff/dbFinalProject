@@ -43,8 +43,8 @@
                         <li class="list-group-item "><h4>Rooms: </h4>
                             <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
-                                <li class="list-group-item"><h4>Hotel: <%=room.hotelid%></h4></li>
-                                <li class="list-group-item">Room Number: <%=room.room_no%></li>
+                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success">Review</button></li>
+                                <li class="list-group-item"><h4>Hotel: <%=room.hotelid%> </h4></li>
                                 <li class="list-group-item">Check In: <%=room.inDate%>  Check Out: <%=room.outDate%></li>
                             </ul>
                             <%});%>
@@ -52,28 +52,21 @@
                         <li class="list-group-item"> <h4>Services</h4>
                         <%reservation.services.forEach(function(service){%>
                         <ul class="list-group">
-                            <li class="list-group-item"><h4>Hotel: <%=service.hotelid%></h4></li>
-                            <li class="list-group-item">Service: <%=service.sType%></li>
+                            <li class="list-group-item">Service: <%=service.sType%> <button id="serviceReview" type="submit" class="btn btn-success">Review</button></li>
                         </ul>
                         <%});%>
                         </li>
-                        <li class="list-group-item"> <h4>Breakfasts</h4>
+                        <li class="list-group-item"> <h4>Breakfasts:</h4>
                             <%reservation.breakfasts.forEach(function(breakfast){%>
                             <ul class="list-group">
-                                <li class="list-group-item"><h4>Hotel: <%=breakfast.hotelid%></h4></li>
-                                <li class="list-group-item">Breakfast: <%=breakfast.bType%></li>
+                                <li class="list-group-item">Breakfast: <%=breakfast.bType%> <button id="breakfastReview" type="submit" class="btn btn-success">Review</button></li>
                             </ul>
                             <%});%>
                         </li>
+
+                        <li class="list-group-item ">Price: <%=reservation.amt%></li>
                         <li class="list-group-item">
                             Invoice num : <%=reservation.invoice_num%>
-                        </li>
-                        <li class="list-group-item ">Price: <%=reservation.amt%></li>
-                        <li class="list-group-item"> <h4>Reviews</h4>
-                            <ul>
-                                <li>Worst room I ever stayed at. Bed had bugs!!!</li>
-                                <li>Loved it! Great view and staff.</li>
-                            </ul>
                         </li>
 
                     </ul>
