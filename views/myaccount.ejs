@@ -46,7 +46,7 @@
                         <li class="list-group-item "><h4>Rooms: </h4>
                             <%reservation.rooms.forEach(function (room) {%>
                             <ul class="list-group">
-                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success">Review</button></li>
+                                <li class="list-group-item">Room Number: <%=room.room_no%> <button id="roomReview" type="submit" class="btn btn-success" data-room='<%room.room_no%>' data-hotel='<%room.hotelid%>'>Review</button></li>
                                 <li class="list-group-item"><h4>Hotel: <%=room.hotelid%> </h4></li>
                                 <li class="list-group-item">Check In: <%=room.inDate%>  Check Out: <%=room.outDate%></li>
                             </ul>
@@ -162,6 +162,52 @@
         </div>
             </form>
           </div>
+
+<div id="reviewModal" tabindex="-1" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3 id="myModalLabel">Review: </h3>
+            </div>
+            <form id="registrationForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input name="review" type="text" id="review" placeholder="Review" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" onclick="document.querySelector('#registrationForm').reset()" aria-hidden="true">Close</button>
+                    <button type="sumbit" class="btn btn-primary" form="reviewForm">Submit</button>
+                </div>
+            </form>
+        </div>
+
+<div id="reviewModal" tabindex="-1" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3 id="myModalLabel">Review: </h3>
+            </div>
+            <form id="registrationForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input name="review" type="text" id="review" placeholder="Review" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" onclick="document.querySelector('#registrationForm').reset()" aria-hidden="true">Close</button>
+                    <button type="sumbit" class="btn btn-primary" form="reviewForm">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
 
         </div>
       </div>
