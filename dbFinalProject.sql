@@ -2,17 +2,19 @@ DROP DATABASE hulton_hotels IF EXISTS;
 CREATE DATABASE hulton_hotels;
 USE hulton_hotels;
 
+DROP TABLE Hotel;
 CREATE TABLE Hotel(
         HotelID int PRIMARY KEY, Phone_no varchar(10), Street varchar(30),
         City varchar(30), State varchar(30), Country varchar(30), ZIP int);
 
+DROP TABLE Users;
 CREATE TABLE Users(UID int PRIMARY KEY AUTO_INCREMENT, Email varchar(50),
         Password varchar(25), account_type int);
-
+DROP TABLE Customer;
 CREATE TABLE Customer(
         CID int PRIMARY KEY AUTO_INCREMENT, Email varchar(50), Address varchar(50), Phone_no varchar(10),
         Name varchar(30), Password varchar(25));
-
+DROP TABLE CreditCard;
 CREATE TABLE CreditCard(
         Cnumber int PRIMARY KEY, BillingAddr varchar(50), Name varchar(30),
         SecCode int, Type varchar(20), ExpDate date, CID int,
@@ -48,13 +50,13 @@ CREATE TABLE `Reservation-Makes`(
         FOREIGN KEY (CID) REFERENCES Customer (CID));
 
 CREATE TABLE Includes(
-        InvoiceNo int, HotelID int, bType varchar(30),
+        InvoiceNo int, HotelID int, bType varchar(30), Quantity int,
         FOREIGN KEY (InvoiceNo) REFERENCES `Reservation-Makes` (InvoiceNo),
         FOREIGN KEY (HotelID, bType) REFERENCES Breakfast (HotelID, bType),
         PRIMARY KEY (InvoiceNo, HotelID, bType));
 
 CREATE TABLE Contains(
-        InvoiceNo int, HotelID int, sType varchar(30),
+        InvoiceNo int, HotelID int, sType varchar(30), Quantity int,
         FOREIGN KEY (InvoiceNo) REFERENCES `Reservation-Makes` (InvoiceNo),
         FOREIGN KEY (HotelID, sType) REFERENCES Service (HotelID, sType),
         PRIMARY KEY (InvoiceNo, HotelID, sType));

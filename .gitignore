@@ -50,3 +50,5 @@ fabric.properties
 .idea/inspectionProfiles/
 public/images/
 /node_modules
+/node_modules/
+sqldb/

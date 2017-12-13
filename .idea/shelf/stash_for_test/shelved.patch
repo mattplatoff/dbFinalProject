@@ -1,0 +1,112 @@
+Index: routes/myaccount.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>var express = require('express');\nvar router = express.Router();\nvar mysql = require('mysql');\n\nvar con = mysql.createConnection({\n    host: \"localhost\",\n    user: \"root\",\n    password: \"password\",\n    database: \"hulton_hotels\"\n});\n\nfunction checkLogedIn(req, res,next){\n    console.log(console.log(\"req session = \"+JSON.stringify(req.session.user)));\n    if(req.session.user){\n        next();     //If session exists, proceed to page\n    } else {\n        var err = new Error(\"Not logged in!\");\n        console.log(req.session.user);\n        next(err);  //Error, trying to access unauthorized page!\n    }\n}\n\nfunction getCustomerData(email,callback){\n    var query= \"SELECT * FROM Customer WHERE Email = '\"+email+\"';\";\n    console.log(\"customer data query = \"+query);\n    con.query(query,function(err,result) {\n        if (err) throw err;\n        console.log(\"customer data after query: \" + JSON.stringify(result));\n       // var cusData={name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']};\n        callback({name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']});\n    });\n\n}\n\nrouter.get('/', checkLogedIn, function(req, res, next) {\n    var reservationlist = [];\n    console.log(\"email= \"+req.session.user.email);\n    getCustomerData(req.session.user.email,function(cusData){\n        console.log(\"wtf is going on\"+JSON.stringify(cusData));\n        res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData});\n    });\n});\n\nmodule.exports = router;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- routes/myaccount.js	(revision 264d0bcf93c7b3b661cf03df225f3e576b5ae5b3)
++++ routes/myaccount.js	(date 1513029662000)
+@@ -10,7 +10,7 @@
+ });
+ 
+ function checkLogedIn(req, res,next){
+-    console.log(console.log("req session = "+JSON.stringify(req.session.user)));
++    console.log("req session = "+JSON.stringify(req.session.user));
+     if(req.session.user){
+         next();     //If session exists, proceed to page
+     } else {
+@@ -23,20 +23,33 @@
+ function getCustomerData(email,callback){
+     var query= "SELECT * FROM Customer WHERE Email = '"+email+"';";
+     console.log("customer data query = "+query);
++    var cusData= {
++    name:"",
++        address:"",
++        phone:"",
++        email:""
++
++    };
+     con.query(query,function(err,result) {
+         if (err) throw err;
+-        console.log("customer data after query: " + JSON.stringify(result));
+-       // var cusData={name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']};
+-        callback({name:result['Name'], address:result['Address'],phone:result['Phone_no'],email:result['Email']});
++        result.forEach(function(record,index){
++            console.log("customer data after query: " + JSON.stringify(result));
++            cusData.name=record['Name'];
++            cusData.email=record['Email'];
++            cusData.address=record['Address'];
++            cusData.phone=record['Phone_no'];
++            console.log("cus data making obj: "+JSON.stringify(cusData));
++            callback(cusData);
++        });
++
+     });
+ 
+ }
+ 
+-router.get('/', checkLogedIn, function(req, res, next) {
++router.get('/', checkLogedIn, function(err,req, res, next) {
+     var reservationlist = [];
+-    console.log("email= "+req.session.user.email);
++   if (err){ res.send("Uhh oh, please log in first");}
+     getCustomerData(req.session.user.email,function(cusData){
+-        console.log("wtf is going on"+JSON.stringify(cusData));
+         res.render('myaccount', { title: 'Hulton Hotel Management', user:cusData});
+     });
+ });
+Index: routes/registeruser.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>var express = require('express');\nvar router = express.Router();\nvar mysql = require('mysql');\n\nvar con = mysql.createConnection({\n    host: \"localhost\",\n    user: \"root\",\n    password: \"password\",\n    database: \"hulton_hotels\"\n});\n\nfunction checkEmail(data, callback){\n    var emailexists = 0;\n    var query = \"SELECT Email FROM Users\";\n    con.query(query, function(err, result){\n        if (err) throw err;\n        if(result.length == 0) callback(emailexists);\n        else{\n            result.forEach(function(record, index){\n                if(record['Email']==data.email) emailexists = 1;\n                if(emailexists || result.length - 1 <= index) callback(emailexists);\n            });\n        }\n    });\n}\n\nfunction checkValidity(data, callback){\n    //valid = 1\n    //passwords don't match = 0\n    //a field was empty = 2\n    //email already exists in db = 3;\n    var valid = 1;\n    console.log(\"test\");\n    if(data.name==\"\"||data.email==\"\"||data.phone==\"\"||data.email==\"\"||data.password==\"\"||data.confpassword==\"\") valid=2;\n    checkEmail(data, function(exists){\n        if(exists) valid = 3;\n        callback(valid);\n    });\n}\n\nfunction accountType(data, callback){\n   var type = 0;\n    var i = 0;\n    for(;i < data.email.length; i++){\n        if(data.email[i] == \"@\"){\n            i++;\n            break;\n        }\n    }\n    console.log(i);\n    if(data.email.substring(i) == 'hultonhotels.com') type = 1;\n    callback(type)\n}\n\nfunction registerUser(data, callback){\n    //insert all users as type 1 users for now.\n    checkValidity(data, function(valid){\n        accountType(data, function(type)\n        {\n            console.log(\"valid = \"+valid);\n            console.log(\"type = \"+type);\n            \n            var query = \"INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('\"+data.name+\"','\"+data.address+\"','\"+data.phone+\"','\"+data.email+\"','\"+data.password+\"');\"\n            var userquery = \"INSERT INTO Users (Email, Password, account_type) VALUE ('\"+data.email+\"','\"+data.password+\"',\"+type+\");\";\n            console.log(\"register user query=\"+userquery);\n\n            if(valid==1) {\n                console.log(\"valid registration\");\n                con.query(query, function(err, rows){\n                    if (err) throw err;\n                    console.log(\"1 Record inserted\");\n                });\n                con.query(userquery, function(err, rows){\n                    if (err) throw err;\n                    console.log(\"1 Record inserted\");\n                });\n                callback();\n            }\n            else{\n                callback(valid);\n            }\n        });\n    });\n};\n\nfunction checkLogedIn(req, res,next){\n    if(req.session.user){\n        next();     //If session exists, proceed to page\n    } else {\n        var err = new Error(\"Not logged in!\");\n        console.log(req.session.user);\n        next(err);  //Error, trying to access unauthorized page!\n    }\n}\n\nrouter.post('/', function(req, res, next) {\n    registerUser(req.body, function(valid){\n        res.render('index', {title: \"Hulton Hotel Management\",valid:valid});\n    });\n    console.log(\"registered user = \" +JSON.stringify(req.body));\n});\n\nmodule.exports = router;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- routes/registeruser.js	(revision 264d0bcf93c7b3b661cf03df225f3e576b5ae5b3)
++++ routes/registeruser.js	(date 1513014571000)
+@@ -74,7 +74,7 @@
+                     if (err) throw err;
+                     console.log("1 Record inserted");
+                 });
+-                callback();
++                callback(valid);
+             }
+             else{
+                 callback(valid);
+@@ -95,7 +95,16 @@
+ 
+ router.post('/', function(req, res, next) {
+     registerUser(req.body, function(valid){
+-        res.render('index', {title: "Hulton Hotel Management",valid:valid});
++        console.log("valid= "+valid);
++        if (valid===1){
++        res.send("registration successful");}
++        else if (valid === 2){
++            res.send("a field was left empty");}
++        else if (valid=== 3){
++            res.send("email already exists in db");}
++        else{
++            res.send("error: valid code not recognized");}
++
+     });
+     console.log("registered user = " +JSON.stringify(req.body));
+ });
+Index: views/myaccount.ejs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />\n\n    <meta http-equiv=\"X-UA-Compatible\" content=\"chrome=1\">\n    <meta name=\"google\" value=\"notranslate\">\n\n    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css\">\n\n    <title><%=title%></title>\n</head>\n<body style=\"padding-top: 70px\">\n<div class=\"container-fluid\">\n    <div class=\"row\">\n        <div class=\"col-md-4\">\n            <ul class=\"list-group\">\n                <li class=\"list-group-item\">My Account Details:</li>\n                <li class=\"list-group-item\"><span class=\"badge\">New</span>Name: <%=user.name%></li>\n                <li class=\"list-group-item\"><span class=\"badge\">New</span>Email: <%=user.email%></li>\n                <li class=\"list-group-item\"><span class=\"badge\">New</span>Address: <%=user.address%></li>\n                <li class=\"list-group-item\"><span class=\"badge\">New</span>Phone Number<%=user.phonenumber%></li>\n            </ul>\n        </div>\n\n        <div class=\"col-md-8\">\n            <div class=\"list-group\"><a href=\"#\" class=\"list-group-item active\">\n                    <h4 class=\"list-group-item-heading\">Room Reservations:</h4>\n                </a>\n\n                <a href=\"#\" class=\"list-group-item\">\n                    <ul class=\"list-group\">\n                        <li class=\"list-group-item active\">Room [Room_no] | [Room Type] - Floor X</li>\n                        <li class=\"list-group-item \">For up to [capacity] residents</li>\n                        <li class=\"list-group-item\">\n                            <ul class=\"list-group\">\n                                [Description]\n                            </ul>\n                        </li>\n                        <li class=\"list-group-item \">Price: [price]</li>\n                        <li class=\"list-group-item\"> <h4>Reviews</h4>\n                            <ul>\n                                <li>Worst room I ever stayed at. Bed had bugs!!!</li>\n                                <li>Loved it! Great view and staff.</li>\n                            </ul>\n                        </li>\n\n                    </ul>\n                </a>\n\n                <a class=\"list-group-item\">\n                    <ul class=\"list-group\">\n                        <li class=\"list-group-item active\">Room [Room_no] | [Room Type] - Floor X</li>\n                        <li class=\"list-group-item \">For up to [capacity] residents</li>\n                        <li class=\"list-group-item\">\n                            <ul class=\"list-group\">\n                                [Description]\n                            </ul>\n                        </li>\n                        <li class=\"list-group-item \">Price: [price]</li>\n                        <li class=\"list-group-item\"> <h4>Reviews</h4>\n                            <ul>\n                                <li>Worst room I ever stayed at. Bed had bugs!!!</li>\n                                <li>Loved it! Great view and staff.</li>\n                            </ul>\n                        </li>\n\n                    </ul>\n                </a>\n\n            </div>\n        </div>\n    </div>\n</div>\n\n<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n    <div class=\"container-fluid\">\n        <!-- Brand and toggle get grouped for better mobile display -->\n        <div class=\"navbar-header\">\n            <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#topFixedNavbar1\" aria-expanded=\"false\"><span class=\"sr-only\">Toggle navigation</span><span class=\"icon-bar\"></span><span class=\"icon-bar\"></span><span class=\"icon-bar\"></span></button>\n            <a class=\"navbar-brand\" href=\"/\" data_temp_dwid=\"1\">Hulton Hotel Management</a></div>\n        <!-- Collect the nav links, forms, and other content for toggling -->\n        <div class=\"collapse navbar-collapse\" id=\"topFixedNavbar1\">\n            <ul class=\"nav navbar-nav\">\n                <li class=\"active\"><a href=\"/myaccount\">My Account<span class=\"sr-only\">(current)</span></a></li>\n                <li><a href=\"/hotels\">Hotels</a></li>\n                <li class=\"dropdown\"><a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">Dropdown<span class=\"caret\"></span></a>\n                    <ul class=\"dropdown-menu\">\n                        <li><a href=\"#\">Action</a></li>\n                        <li><a href=\"#\">Another action</a></li>\n                        <li><a href=\"#\">Something else here</a></li>\n                        <li role=\"separator\" class=\"divider\"></li>\n                        <li><a href=\"#\">Separated link</a></li>\n                        <li role=\"separator\" class=\"divider\"></li>\n                        <li><a href=\"#\">One more separated link</a></li>\n                    </ul>\n                </li>\n            </ul>\n            <ul class=\"nav navbar-nav navbar-right\">\n                <li></li>\n                <li class=\"dropdown\">\n                    <ul class=\"dropdown-menu\">\n                        <li><a href=\"#\">Action</a></li>\n                        <li><a href=\"#\">Another action</a></li>\n                        <li><a href=\"#\">Something else here</a></li>\n                        <li role=\"separator\" class=\"divider\"></li>\n                        <li><a href=\"#\">Separated link</a></li>\n                    </ul>\n                </li>\n            </ul>\n        </div>\n        <!-- /.navbar-collapse -->\n    </div>\n    <!-- /.container-fluid -->\n</nav>\n\n<script src=\"//code.jquery.com/jquery-1.11.3.min.js\"></script>\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>\n<script src=\"/javascripts/myaccount.js\"></script>\n</body>\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- views/myaccount.ejs	(revision 264d0bcf93c7b3b661cf03df225f3e576b5ae5b3)
++++ views/myaccount.ejs	(date 1513013554000)
+@@ -20,7 +20,7 @@
+                 <li class="list-group-item"><span class="badge">New</span>Name: <%=user.name%></li>
+                 <li class="list-group-item"><span class="badge">New</span>Email: <%=user.email%></li>
+                 <li class="list-group-item"><span class="badge">New</span>Address: <%=user.address%></li>
+-                <li class="list-group-item"><span class="badge">New</span>Phone Number<%=user.phonenumber%></li>
++                <li class="list-group-item"><span class="badge">New</span>Phone Number: <%=user.phone%></li>
+             </ul>
+         </div>
+ 
