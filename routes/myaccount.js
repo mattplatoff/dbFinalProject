@@ -108,22 +108,32 @@ function getCustomerData(email,callback){
     var query= "SELECT * FROM Customer WHERE Email = '"+email+"';";
     console.log("customer data query = "+query);
     var cusData= {
-    name:"",
+        name:"",
         address:"",
         phone:"",
-        email:""
+        email:"",
+        cc:[]
     };
     con.query(query,function(err,result) {
         if (err) throw err;
+        var cid = result[0].CID;
         result.forEach(function(record,index){
             console.log("customer data after query: " + JSON.stringify(result));
             cusData.name=record['Name'];
             cusData.email=record['Email'];
             cusData.address=record['Address'];
             cusData.phone=record['Phone_no'];
-            console.log("cus data making obj: "+JSON.stringify(cusData));
+            console.log("cus data making obj: "+JSON.stringify(cusData.cc));
         });
-        callback(cusData);
+        var ccQuery = "SELECT Cnumber, ExpDate FROM creditcard WHERE CID="+cid+";";
+        con.query(ccQuery, function(err,result){
+            if(err) throw err;
+            result.forEach(function(record,index){
+                var card = {number: record['Cnumber'], date: record['ExpDate']};
+                cusData.cc.push(card);
+            });
+            callback(cusData);
+        })
     });
 }
 
