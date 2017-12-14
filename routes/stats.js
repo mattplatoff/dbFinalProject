@@ -23,7 +23,7 @@ function checkLogedIn(req, res,next){
 //highest rated room type
 function hrrt(data, callback){
 	var resp = "Highest Rated Room Types (Per Hotel):\n";
-	var query = "SELECT R.HotelID, R.Type, MAX(R.Rating) AS Rating FROM (SELECT HotelID, Type, AVG(Rating) AS Rating FROM `review-writes` JOIN `room-has` USING (Room_no, HotelID) WHERE dateReviewed BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' GROUP BY HotelID, Type) AS R GROUP BY hotelID;"
+	var query = "SELECT R.HotelID, R.Type, MAX(R.Rating) AS Rating FROM (SELECT HotelID, Type, AVG(Rating) AS Rating FROM `review-writes` JOIN `room-has` USING (Room_no, HotelID) WHERE dateReviewed BETWEEN '"+data.dateStart.substring(0,10)+"' AND '"+data.dateEnd.substring(0,10)+"' GROUP BY HotelID, Type) AS R GROUP BY hotelID;"
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");
@@ -40,7 +40,7 @@ function hrrt(data, callback){
 //5 best customers
 function fbc(data, callback){
 	var resp = "5 Best Customers:\n";
-	var query="SELECT C1.name FROM (SELECT CID, SUM(TotalAmt) FROM `reservation-makes` R WHERE R.ResDate BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' GROUP BY CID ORDER BY TotalAmt) AS C, Customer C1 WHERE C.CID=C1.CID limit 5";
+	var query="SELECT C1.name FROM (SELECT CID, SUM(TotalAmt) FROM `reservation-makes` R WHERE R.ResDate BETWEEN '"+data.dateStart.substring(0,10)+"' AND '"+data.dateEnd.substring(0,10)+"' GROUP BY CID ORDER BY TotalAmt) AS C, customer C1 WHERE C.CID=C1.CID limit 5";
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");
@@ -60,13 +60,12 @@ function fbc(data, callback){
 //highest rated breakfast type
 function hrbt(data, callback){
 	var resp = "Highest Rated Breakfast Type:\n";
-	var query = "SELECT B.bType, B.HotelID FROM breakfast B JOIN `review-writes` R ON B.bType = R.bType AND B.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE bType IS NOT NULL);";
+	var query = "SELECT B.bType, B.HotelID FROM breakfast B JOIN `review-writes` R ON B.bType = R.bType AND B.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart.substring(0,10)+"' AND '"+data.dateEnd.substring(0,10)+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE bType IS NOT NULL);";
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");
 		else{
 			result.forEach(function(record, index){
-				if(record.length!=1 && index == 0) resp += "(Tie)\n";
                 resp += "Hotel(ID): " + record['HotelID'] + " -- Breakfast Type: " + record['bType'] + "\n";
                 console.log(resp); 
                 if(result.length - 1 <= index) callback(resp);
@@ -78,13 +77,12 @@ function hrbt(data, callback){
 //highest rated service type
 function hrst(data, callback){
 	var resp = "Highest Rated Service Type:\n";
-	var query = "SELECT S.sType, S.HotelID FROM service S JOIN `review-writes` R ON S.sType = R.sType AND S.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE sType IS NOT NULL);";
+	var query = "SELECT S.sType, S.HotelID FROM service S JOIN `review-writes` R ON S.sType = R.sType AND S.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart.substring(0,10)+"' AND '"+data.dateEnd.substring(0,10)+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE sType IS NOT NULL);";
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");
 		else{
 			result.forEach(function(record, index){
-				if(record.length!=1 && index == 0) resp += "(Tie)\n";
                 resp += "Hotel(ID): " + record['HotelID'] + " -- Service Type: " + record['sType'] + "\n";
                 console.log(resp); 
                 if(result.length - 1 <= index) callback(resp);
