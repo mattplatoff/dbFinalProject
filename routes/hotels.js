@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
     user: "root",
     password: "password",
     database: "hulton_hotels"
@@ -14,7 +14,7 @@ var con = mysql.createConnection({
 function getServiceReviews(services, callback){
     var serviceList = [];
     services.forEach(function(service, index){
-        var sql = "SELECT * FROM `Review-Writes` WHERE HotelID = " + service['HotelID'] + " AND sType = '" + service['sType'] + "'";
+        var sql = "SELECT * FROM `review-writes` WHERE HotelID = " + service['HotelID'] + " AND sType = '" + service['sType'] + "'";
         con.query(sql, function (err, reviews) {
             service['Reviews'] = reviews;
             if(!reviews){
@@ -31,7 +31,7 @@ function getServiceReviews(services, callback){
 function getHotelServices(hotelList, callback){
     var hotelListing = [];
     hotelList.forEach(function(hotelRecord, index){
-        var sql = "SELECT * FROM Service WHERE HotelID = " + hotelRecord['HotelID'];
+        var sql = "SELECT * FROM service WHERE HotelID = " + hotelRecord['HotelID'];
         con.query(sql, function (err, services) {
             getServiceReviews(services, function(serviceList){
                 hotelRecord['Services'] = serviceList;
@@ -47,7 +47,7 @@ function getHotelServices(hotelList, callback){
 function getBreakfastReviews(breakfasts, callback){
     var breakfastList = [];
     breakfasts.forEach(function(breakfast, index){
-        var sql = "SELECT * FROM `Review-Writes` WHERE HotelID = " + breakfast['HotelID'] + " AND bType = '" + breakfast['bType'] + "'";
+        var sql = "SELECT * FROM `review-writes` WHERE HotelID = " + breakfast['HotelID'] + " AND bType = '" + breakfast['bType'] + "'";
         con.query(sql, function (err, reviews) {
             breakfast['Reviews'] = reviews;
             if(!reviews){
@@ -64,7 +64,7 @@ function getBreakfastReviews(breakfasts, callback){
 function getHotelBreakfasts(hotels, callback){
     var hotelListing = [];
     hotels.forEach(function(hotelRecord, index){
-        var sql = "SELECT * FROM Breakfast WHERE HotelID = " + hotelRecord['HotelID'];
+        var sql = "SELECT * FROM breakfast WHERE HotelID = " + hotelRecord['HotelID'];
         con.query(sql, function (err, breakfasts) {
             getBreakfastReviews(breakfasts, function(breakfastList){
                 hotelRecord['Breakfasts'] = breakfastList;
@@ -83,7 +83,7 @@ function getHotelBreakfasts(hotels, callback){
 
 router.get('/', function(req, res, next) {
     var hotelList = [];
-    sql = "SELECT * FROM Hotel";
+    sql = "SELECT * FROM hotel";
     con.connect(function(err) {
         con.query(sql, function(err, hotelList){
             getHotelServices(hotelList, function(hotels){

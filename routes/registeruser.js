@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
     user: "root",
     password: "password",
     database: "hulton_hotels"
@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 function checkEmail(data, callback){
     var emailexists = 0;
-    var query = "SELECT Email FROM Users";
+    var query = "SELECT Email FROM users";
     con.query(query, function(err, result){
         if (err) throw err;
         if(result.length == 0) callback(emailexists);
@@ -60,8 +60,8 @@ function registerUser(data, callback){
             console.log("valid = "+valid);
             console.log("type = "+type);
             
-            var query = "INSERT INTO Customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"','"+data.phone+"','"+data.email+"','"+data.password+"');"
-            var userquery = "INSERT INTO Users (Email, Password, account_type) VALUE ('"+data.email+"','"+data.password+"',"+type+");";
+            var query = "INSERT INTO customer (Name, Address, Phone_no, Email, Password) VALUES ('"+data.name+"','"+data.address+"','"+data.phone+"','"+data.email+"','"+data.password+"');"
+            var userquery = "INSERT INTO users (Email, Password, account_type) VALUE ('"+data.email+"','"+data.password+"',"+type+");";
             console.log("register user query="+userquery);
 
             if(valid==1) {

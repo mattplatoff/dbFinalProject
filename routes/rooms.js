@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
     user: "root",
     password: "password",
     database: "hulton_hotels"
@@ -21,7 +21,7 @@ function getRoomReviews(result, req, callback){
     con.query(sql, function (err, result) {
        if (err) throw err;
         result.forEach(function(roomRecord, index){
-            reviewSQL = "SELECT * FROM `Review-Writes` WHERE HotelId = " + req.params.id + " AND Room_no = " + roomRecord['Room_no'];
+            reviewSQL = "SELECT * FROM `review-writes` WHERE HotelId = " + req.params.id + " AND Room_no = " + roomRecord['Room_no'];
             loadReviews(reviewSQL, function(reviewList){
                 roomRecord['Reviews'] = reviewList;
                 roomList.push(roomRecord);
@@ -33,7 +33,7 @@ function getRoomReviews(result, req, callback){
     });
 }
 router.post('/rooms/breakfast/:id', function(req, res, next){
-  var breakfastSQL = "SELECT * FROM Breakfast WHERE HotelID = " + req.params.id;
+  var breakfastSQL = "SELECT * FROM breakfast WHERE HotelID = " + req.params.id;
   con.connect(function(err) {
     con.query(breakfastSQL, function (err, breakfasts) {
         if(err) throw err;
@@ -43,7 +43,7 @@ router.post('/rooms/breakfast/:id', function(req, res, next){
 });
 
 router.post('/rooms/services/:id', function(req, res, next){
-  var serviceSQL = "SELECT * FROM Service WHERE HotelID = " + req.params.id;
+  var serviceSQL = "SELECT * FROM service WHERE HotelID = " + req.params.id;
   con.connect(function(err) {
     con.query(serviceSQL, function (err, services) {
         if(err) throw err;
@@ -60,10 +60,10 @@ function getCID(getCIDSQL, callback){
 }
 
 router.post('/rooms/cclist/:email', function(req, res, next){
-    var getCIDSQL = "SELECT CID FROM Customer WHERE Email = '" + req.params.email + "'";
+    var getCIDSQL = "SELECT CID FROM customer WHERE Email = '" + req.params.email + "'";
   con.connect(function(err){
     getCID(getCIDSQL, function(CID){
-      var getCCSQL = "SELECT Cnumber, Type, CID FROM CreditCard WHERE CID = " + CID['CID'];
+      var getCCSQL = "SELECT Cnumber, Type, CID FROM creditcard WHERE CID = " + CID['CID'];
       con.query(getCCSQL, function (err, CCs) {
           if(err) throw err;
           res.send(JSON.stringify(CCs));
@@ -73,7 +73,7 @@ router.post('/rooms/cclist/:email', function(req, res, next){
 });
 
 router.post('/rooms/findReservations/', function(req, res, next){
-  var sql = "SELECT inDate, outDate FROM Reserves WHERE HotelID = " + req.body.hotelid + " AND Room_no = " + req.body.roomno + ";";
+  var sql = "SELECT inDate, outDate FROM reserves WHERE HotelID = " + req.body.hotelid + " AND Room_no = " + req.body.roomno + ";";
   /*console.log(sql);
   for (var i = 0; i < sql.length; i++) {
     console.log(sql.charAt(i) + " " + sql.charCodeAt(i));
@@ -91,7 +91,7 @@ router.post('/rooms/findReservations/', function(req, res, next){
 
 router.get('/:id', function(req, res, next) {
     var roomList = [];
-    sql = "SELECT * FROM `Room-Has` WHERE HotelID = " + req.params.id; //yay mysql injection
+    sql = "SELECT * FROM `room-has` WHERE HotelID = " + req.params.id; //yay mysql injection
     con.connect(function(err) {
         getRoomReviews(sql, req, function(roomList){
             roomList.forEach(function(rm){
@@ -117,7 +117,7 @@ function insertInvoice(sql, callback){
 }
 
 function insertRooms(rooms, hotels, sdates, edates, invoiceID, callback){
-  var sql = "INSERT INTO Reserves VALUES ";
+  var sql = "INSERT INTO reserves VALUES ";
   console.log(JSON.stringify(rooms));
   Object.keys(rooms).forEach(function(index){
     if(index > 0){
@@ -137,7 +137,7 @@ function insertRooms(rooms, hotels, sdates, edates, invoiceID, callback){
 }
 
 function insertBreakfasts(invoiceID, hotel, inData, callback){
-  var sql = "INSERT INTO Includes VALUES ";
+  var sql = "INSERT INTO includes VALUES ";
   var inserted = false;
   Object.keys(inData).forEach(function (key, index) {
     if(key == "Continental" || key =="French"|| key =="American"|| key =="Italian"|| key =="English"){
@@ -156,7 +156,7 @@ function insertBreakfasts(invoiceID, hotel, inData, callback){
 }
 
 function insertServices(invoiceID, hotel, inData, callback){
-  var sql = "INSERT INTO Contains VALUES ";
+  var sql = "INSERT INTO contains VALUES ";
   var inserted = false;
   Object.keys(inData).forEach(function (key, index) {
     if(key == "Laundry" || key == "Massage" || key == "Spa" || key == "Airport drop-off"|| key == "Airport pick-up" || key == "Parking"|| key == "Valet"){
@@ -186,7 +186,7 @@ router.post('/rooms/reserve', function(req, res, next) {
     var edates = inData['edate'];
     //so getMonth is zero indexed but getDate is 1 indexed wtf
     var ResDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-    var sql = "INSERT INTO `Reservation-Makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
+    var sql = "INSERT INTO `reservation-makes` (ResDate , TotalAmt,  CID,  Cnumber)   VALUES  (" +
               "'" + ResDate + "',  " + TotalAmt + ",  " + CID + ",  " + Cnumber + " )";
     con.connect(function(err) {
       insertInvoice(sql, function(invoiceID){

@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
     user: "root",
     password: "password",
     database: "hulton_hotels"
@@ -20,7 +20,7 @@ function logIn(req,res){
         res(status);
     }
     else {
-     var query = "SELECT * FROM Users WHERE Email= \""+req.body.email+"\";";
+     var query = "SELECT * FROM users WHERE Email= \""+req.body.email+"\";";
      var status=0;
         console.log("query = " + query);
      con.query(query, function(err, result){

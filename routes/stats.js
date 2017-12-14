@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-  host: "localhost",
+  host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
   user: "root",
   password: "password",
   database: "hulton_hotels"
@@ -40,7 +40,7 @@ function hrrt(data, callback){
 //5 best customers
 function fbc(data, callback){
 	var resp = "5 Best Customers:\n";
-	var query="SELECT C1.name FROM (SELECT CID, SUM(TotalAmt) FROM `Reservation-Makes` R WHERE R.ResDate BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' GROUP BY CID ORDER BY TotalAmt) AS C, Customer C1 WHERE C.CID=C1.CID limit 5";
+	var query="SELECT C1.name FROM (SELECT CID, SUM(TotalAmt) FROM `reservation-makes` R WHERE R.ResDate BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' GROUP BY CID ORDER BY TotalAmt) AS C, Customer C1 WHERE C.CID=C1.CID limit 5";
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");
@@ -60,7 +60,7 @@ function fbc(data, callback){
 //highest rated breakfast type
 function hrbt(data, callback){
 	var resp = "Highest Rated Breakfast Type:\n";
-	var query = "SELECT B.bType, B.HotelID FROM Breakfast B JOIN `review-writes` R ON B.bType = R.bType AND B.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE bType IS NOT NULL);";
+	var query = "SELECT B.bType, B.HotelID FROM breakfast B JOIN `review-writes` R ON B.bType = R.bType AND B.HotelID=R.HotelID WHERE R.dateReviewed BETWEEN '"+data.dateStart+"' AND '"+data.dateEnd+"' AND R.Rating = (SELECT MAX(Rating) FROM `review-writes` WHERE bType IS NOT NULL);";
 	con.query(query, function(err, result)
 	{
 		if(result.length == 0) callback("No data");

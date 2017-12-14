@@ -3,7 +3,7 @@ var router = express.Router();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "dbproj.cep2q1dc92rr.us-east-1.rds.amazonaws.com",
     user: "root",
     password: "password",
     database: "hulton_hotels"
@@ -22,7 +22,7 @@ function checkLogedIn(req, res,next){
 }
 
 function getInvoiceData(cid,callback){
-    var query = "SELECT * FROM `Reservation-Makes` WHERE CID="+ cid+";";
+    var query = "SELECT * FROM `reservation-makes` WHERE CID="+ cid+";";
     var invoices = [];
     con.query(query, function(err,result){
         if (err) throw err;
@@ -44,7 +44,7 @@ function getInvoiceData(cid,callback){
 }
 
 function getRoomsFromInvoice(invoice_num,callback){
-    var query = "SELECT * FROM Reserves WHERE InvoiceNo = "+invoice_num+";";
+    var query = "SELECT * FROM reserves WHERE InvoiceNo = "+invoice_num+";";
     var rooms = [];
     con.query(query, function(err,result){
         if (err) throw err;
@@ -65,7 +65,7 @@ function getRoomsFromInvoice(invoice_num,callback){
 
 
 function getServicesFromInvoiceNum(invoice_num,callback){
-    var query = "SELECT * FROM Contains WHERE InvoiceNo = "+invoice_num+";";
+    var query = "SELECT * FROM contains WHERE InvoiceNo = "+invoice_num+";";
 
     var services = [];
 
@@ -85,7 +85,7 @@ function getServicesFromInvoiceNum(invoice_num,callback){
 }
 
 function getBreakfastFromInvoice(invoice_num,callback){
-    var query = "SELECT * FROM Includes WHERE InvoiceNo = "+invoice_num+";";
+    var query = "SELECT * FROM includes WHERE InvoiceNo = "+invoice_num+";";
     console.log("entered getBreakfastFromInvoice()");
     var breakfasts = [];
 
@@ -105,7 +105,7 @@ function getBreakfastFromInvoice(invoice_num,callback){
 }
 
 function getCustomerData(email,callback){
-    var query= "SELECT * FROM Customer WHERE Email = '"+email+"';";
+    var query= "SELECT * FROM customer WHERE Email = '"+email+"';";
     console.log("customer data query = "+query);
     var cusData= {
         name:"",
@@ -182,7 +182,7 @@ function aggragrateInvoiceData(cid,callback){
 }
 
 function getCidFromEmail(email,callback){
-    var query= "SELECT * FROM Customer WHERE Email = '"+email+"';";
+    var query= "SELECT * FROM customer WHERE Email = '"+email+"';";
     console.log("entered getCidFromEmail query= "+query);
     con.query(query,function(err,result){
         if (err) throw err;
@@ -261,13 +261,13 @@ console.log(JSON.stringify(req.body));
     checkCardValidty(req.body, function(valid){
         console.log(valid);
         if(valid == 1){
-            var query = "SELECT CID FROM Customer WHERE Email='" + req.session.user.email + "';";
+            var query = "SELECT CID FROM customer WHERE Email='" + req.session.user.email + "';";
             var cid;
             con.query(query, function(err, result){
                 if(err) throw err;
                 console.log("got cid");
                 cid = result[0].CID;
-                var insQuery = "INSERT INTO CreditCard(Cnumber, BillingAddr, Name, SecCode, Type, ExpDate, CID) VALUES ("+req.body.number+",'"+req.body.address+"','"+req.body.name+"',"+req.body.code+",'"+req.body.cardType+"','"+req.body.expirationDate+"',"+cid+");";
+                var insQuery = "INSERT INTO creditcard(Cnumber, BillingAddr, Name, SecCode, Type, ExpDate, CID) VALUES ("+req.body.number+",'"+req.body.address+"','"+req.body.name+"',"+req.body.code+",'"+req.body.cardType+"','"+req.body.expirationDate+"',"+cid+");";
                 con.query(insQuery, function(err, result){
                     if(err) throw err;
                     console.log("inserted cc");
@@ -311,7 +311,7 @@ router.post("/review",function(req,res){
     var stype = data["sType"]==="" ? "NULL" : data["sType"];
     var btype = data["bType"]==="" ? "NULL" : data["bType"];
     var room_no = data["Room_no"]==="" ? "NULL" : data["Room_no"];
-   var sql = "INSERT INTO `Review-Writes` (Rating, TextComment, CID, sType, bType, Room_no, Hotelid, dateReviewed) VALUES ( " +
+   var sql = "INSERT INTO `review-writes` (Rating, TextComment, CID, sType, bType, Room_no, Hotelid, dateReviewed) VALUES ( " +
        data["Rating"]+",'"+data['TextComment']+"',"+ data["CID"]+",'" +stype+"','"+btype+"',"+room_no+","+data["Hotelid"]+",NOW());";
    console.log("sql review query= "+sql);
    con.query(sql,function(err, result){
